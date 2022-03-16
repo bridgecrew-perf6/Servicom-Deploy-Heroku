@@ -1,0 +1,7 @@
+export {default as Home} from './Home'
+export {default as NotFoundCover} from  './NotFoundCover'
+export {default as SignupSimple} from './SignupSimple'
+export {default as SigninSimple} from './SigninSimple'
+export {default as PasswordResetSimple } from './PasswordResetSimple'
+export {default as Products } from './Products'
+export {default as About} from './About'

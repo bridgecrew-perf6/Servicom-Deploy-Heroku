@@ -1,0 +1,14 @@
+export { default as Categories } from './Categories';
+export { default as Courses } from './Courses';
+export { default as Hero } from './Hero';
+export { default as PromoNumbers } from './PromoNumbers';
+export { default as Reviews } from './Reviews';
+export { default as Subscription } from './Subscription';
+export { default as FeaturedProducts } from './FeaturedProducts';
+export { default as LatestProducts } from './LatestProducts';
+export { default as News } from './News';
+export { default as Newsletter } from './Newsletter';
+export { default as Overview } from './Overview';
+export { default as Products } from './Products';
+export { default as QuickSearch } from './QuickSearch';
+export { default as Sales } from './Sales';
