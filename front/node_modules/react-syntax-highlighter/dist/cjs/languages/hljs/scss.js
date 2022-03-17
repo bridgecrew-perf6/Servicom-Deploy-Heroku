@@ -5,9 +5,9 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports["default"] = void 0;
 
 var _scss = _interopRequireDefault(require("highlight.js/lib/languages/scss"));
 
-var _default = _scss.default;
-exports.default = _default;
+var _default = _scss["default"];
+exports["default"] = _default;

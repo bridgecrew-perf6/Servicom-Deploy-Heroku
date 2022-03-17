@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports["default"] = void 0;
 var _default = {
   "hljs-comment": {
     "color": "#6c6b5a"
@@ -106,4 +106,4 @@ var _default = {
     "fontWeight": "bold"
   }
 };
-exports.default = _default;
+exports["default"] = _default;

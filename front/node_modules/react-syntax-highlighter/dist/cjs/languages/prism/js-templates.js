@@ -5,10 +5,10 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports["default"] = void 0;
 
 var _jsTemplates = _interopRequireDefault(require("refractor/lang/js-templates.js"));
 
 ;
-var _default = _jsTemplates.default;
-exports.default = _default;
+var _default = _jsTemplates["default"];
+exports["default"] = _default;

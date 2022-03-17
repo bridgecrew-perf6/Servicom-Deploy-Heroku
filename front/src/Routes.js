@@ -32,17 +32,7 @@ const Routes = () => {
           />
         )}
       />
-       <Route
-        exact
-        path="/products"
-        render={matchProps => (
-          <WithLayout
-            {...matchProps}
-            component={Products}
-            layout={MainLayout}
-          />
-        )}
-      />
+      
       <Route
         exact
         path="/notfoundcover"
@@ -89,6 +79,17 @@ const Routes = () => {
       />
       <Route
         exact
+        path="/products"
+        render={matchProps => (
+          <WithLayout
+            {...matchProps}
+            component={Products}
+            layout={MainLayout}
+          />
+        )}
+      />
+      <Route
+        exact
         path="/aboutus"
         render={matchProps => (
           <WithLayout
@@ -104,3 +105,7 @@ const Routes = () => {
 };
 
 export default Routes;
+/**
+ * 
+ *  
+ */

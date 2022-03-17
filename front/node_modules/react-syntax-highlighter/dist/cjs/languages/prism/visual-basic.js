@@ -5,10 +5,10 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports["default"] = void 0;
 
 var _visualBasic = _interopRequireDefault(require("refractor/lang/visual-basic.js"));
 
 ;
-var _default = _visualBasic.default;
-exports.default = _default;
+var _default = _visualBasic["default"];
+exports["default"] = _default;

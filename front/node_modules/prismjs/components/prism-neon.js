@@ -18,7 +18,7 @@ Prism.languages.neon = {
 		lookbehind: true
 	},
 	'boolean': {
-		pattern: /(^|[[{(=:,\s])(?:true|false|yes|no)(?=$|[\]}),:=\s])/i,
+		pattern: /(^|[[{(=:,\s])(?:false|no|true|yes)(?=$|[\]}),:=\s])/i,
 		lookbehind: true
 	},
 	'null': {
@@ -32,10 +32,9 @@ Prism.languages.neon = {
 		greedy: true
 	},
 	'literal': {
-		pattern: /(^|[[{(=:,\s])(?:[^#"\',:=[\]{}()\s`-]|[:-][^"\',=[\]{}()\s])(?:[^,:=\]})(\s]|:(?![\s,\]})]|$)|[ \t]+[^#,:=\]})(\s])*/,
+		pattern: /(^|[[{(=:,\s])(?:[^#"',:=[\]{}()\s`-]|[:-][^"',=[\]{}()\s])(?:[^,:=\]})(\s]|:(?![\s,\]})]|$)|[ \t]+[^#,:=\]})(\s])*/,
 		lookbehind: true,
 		alias: 'string',
 	},
 	'punctuation': /[,:=[\]{}()-]/,
 };
-

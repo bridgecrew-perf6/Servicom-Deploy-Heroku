@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports["default"] = void 0;
 // @flow
 // Converted automatically using ./tools/themeFromVsCode
 var _default = {
@@ -159,4 +159,4 @@ var _default = {
     "fontStyle": "italic"
   }
 };
-exports.default = _default;
+exports["default"] = _default;

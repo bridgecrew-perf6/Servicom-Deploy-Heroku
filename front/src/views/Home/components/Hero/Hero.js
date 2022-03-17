@@ -30,7 +30,7 @@ const Hero = props => {
                   <Typography component="span" variant="inherit" color="primary">
                     Learn new skills,
                   </Typography>{' '}
-                  gain more experience
+                  gain more experienceesssssssssssss
                 </span>
               }
               subtitle="Our mission is to spread education that is easy accessible and everyone can learn."

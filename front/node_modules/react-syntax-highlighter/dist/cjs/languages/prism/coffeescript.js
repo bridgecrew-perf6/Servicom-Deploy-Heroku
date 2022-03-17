@@ -5,10 +5,10 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports["default"] = void 0;
 
 var _coffeescript = _interopRequireDefault(require("refractor/lang/coffeescript.js"));
 
 ;
-var _default = _coffeescript.default;
-exports.default = _default;
+var _default = _coffeescript["default"];
+exports["default"] = _default;

@@ -5,9 +5,9 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports["default"] = void 0;
 
 var _smali = _interopRequireDefault(require("highlight.js/lib/languages/smali"));
 
-var _default = _smali.default;
-exports.default = _default;
+var _default = _smali["default"];
+exports["default"] = _default;

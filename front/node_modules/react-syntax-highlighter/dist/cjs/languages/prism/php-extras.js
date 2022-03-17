@@ -5,10 +5,10 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports["default"] = void 0;
 
 var _phpExtras = _interopRequireDefault(require("refractor/lang/php-extras.js"));
 
 ;
-var _default = _phpExtras.default;
-exports.default = _default;
+var _default = _phpExtras["default"];
+exports["default"] = _default;

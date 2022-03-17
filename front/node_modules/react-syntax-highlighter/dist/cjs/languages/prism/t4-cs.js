@@ -5,10 +5,10 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = void 0;
+exports["default"] = void 0;
 
 var _t4Cs = _interopRequireDefault(require("refractor/lang/t4-cs.js"));
 
 ;
-var _default = _t4Cs.default;
-exports.default = _default;
+var _default = _t4Cs["default"];
+exports["default"] = _default;
