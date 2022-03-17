@@ -4,7 +4,7 @@
  * You may delete this file and its occurrences from the project filesystem if you are using GatsbyJS or NextJS version
  */
  import React from 'react';
- import {HashRouter as Router } from 'react-router-dom';
+ import { Router } from 'react-router-dom';
  import { createBrowserHistory } from 'history';
  //import Routes from './Routes';
  
