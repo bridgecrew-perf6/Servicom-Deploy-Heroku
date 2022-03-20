@@ -177,7 +177,7 @@ const Footer = props => {
 
 Footer.propTypes = {
   className: PropTypes.string,
-  pages: PropTypes.object.isRequired,
+  pages: PropTypes.array.isRequired,
 };
 
 export default Footer;

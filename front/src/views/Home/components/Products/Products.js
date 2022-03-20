@@ -137,7 +137,7 @@ const Products = props => {
             </Card>
           </Grid>
         ))}
-        <Grid item xs={12} container justify="center" data-aos="fade-up">
+        <Grid item xs={12} container justifyContent="center" data-aos="fade-up">
           <Button href='/products' variant="outlined" color="primary">
             See all list
           </Button>

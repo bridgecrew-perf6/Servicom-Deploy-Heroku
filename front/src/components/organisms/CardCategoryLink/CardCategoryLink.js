@@ -57,7 +57,7 @@ const CardCategoryLink = props => {
     >
       <>
       <Grid container spacing={2} className="card-category-link__wrapper">
-        <Grid item container justify={justifyGrid} xs={12}>
+        <Grid item container justifyContent={justifyGrid} xs={12}>
           <IconAlternate
             fontIconClass={fontIconClass}
             color={color}

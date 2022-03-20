@@ -52,7 +52,7 @@ const QuickSearch = props => {
             <Grid
               item
               container
-              justify={isMd ? 'flex-start' : 'center'}
+              justifyContent={isMd ? 'flex-start' : 'center'}
               alignItems="center"
               xs={12}
               md={6}
@@ -65,7 +65,7 @@ const QuickSearch = props => {
             <Grid
               item
               container
-              justify="space-between"
+              justifyContent="space-between"
               alignItems={isMd ? 'flex-start' : 'center'}
               xs={12}
               md={6}
@@ -103,7 +103,7 @@ const QuickSearch = props => {
             <Grid
               item
               container
-              justify={isMd ? 'flex-start' : 'center'}
+              justifyContent={isMd ? 'flex-start' : 'center'}
               alignItems="center"
               xs={12}
               md={6}
@@ -116,7 +116,7 @@ const QuickSearch = props => {
             <Grid
               item
               container
-              justify="space-between"
+              justifyContent="space-between"
               alignItems={isMd ? 'flex-start' : 'center'}
               xs={12}
               md={6}

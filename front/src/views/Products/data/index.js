@@ -88,28 +88,35 @@ export const folio = [
 export const partners = [
   {
     name: 'Airbnb',
-    logo: 'https://assets.maccarianagency.com/the-front/logos/airbnb.svg',
+    logo: 'https://iconape.com/wp-content/files/ty/291945/png/ooredoo-logo.png',
   },
   {
     name: 'Coinbase',
-    logo: 'https://assets.maccarianagency.com/the-front/logos/coinbase.svg',
+    logo: 'https://uk.talan.com/fileadmin/Medias/logo-talan.png',
   },
-  {
-    name: 'Dribbble',
-    logo: 'https://assets.maccarianagency.com/the-front/logos/dribbble.svg',
-  },
+  
   {
     name: 'Instagram',
-    logo: 'https://assets.maccarianagency.com/the-front/logos/instagram.svg',
+    logo: 'https://1000logos.net/wp-content/uploads/2017/04/Orange-logo-500x500.jpg',
   },
   {
     name: 'Netflix',
-    logo: 'https://assets.maccarianagency.com/the-front/logos/netflix.svg',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Airbnb_Logo_B%C3%A9lo.svg/2560px-Airbnb_Logo_B%C3%A9lo.svg.png',
   },
-  {
-    name: 'Pinterest',
-    logo: 'https://assets.maccarianagency.com/the-front/logos/pinterest.svg',
-  },
+ 
+];
+export const tags = [
+  'coffee',
+  'cups',
+  'morning coffee',
+  'breakfast',
+  'nike',
+  'adidas',
+  'sport',
+  'shop',
+  'training',
+  'larq',
+  
 ];
 export const result = [
   {

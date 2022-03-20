@@ -80,7 +80,7 @@ const Overview = props => {
             disableGutter
           />
         </Grid>
-        <Grid item container justify="flex-end" xs={12} md={4}>
+        <Grid item container justifyContent="flex-end" xs={12} md={4}>
           <Image
             src="https://assets.maccarianagency.com/the-front/photos/ecommerce/overview-cover-right.png"
             srcSet="https://assets.maccarianagency.com/the-front/photos/ecommerce/overview-cover-right@2x.png 2x"

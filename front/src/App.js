@@ -14,7 +14,23 @@
  
  import 'swiper/css/swiper.min.css';
  import 'aos/dist/aos.css';
- import { Switch, Route, Redirect } from 'react-router-dom';
+import Routes from 'Routes';
+ 
+ 
+ const browserHistory = createBrowserHistory();
+ 
+ const App = () => {
+   return (
+     <Router history={browserHistory}>
+    <Routes/>
+     </Router>
+   );
+ }
+ 
+ /**
+  * 
+  * 
+  * import { Switch, Route, Redirect } from 'react-router-dom';
 import WithLayout from 'WithLayout';
 import { Main as MainLayout} from './layouts';
 
@@ -27,13 +43,7 @@ import {
   PasswordResetSimple,
   About
 } from './views';
- 
- const browserHistory = createBrowserHistory();
- 
- const App = () => {
-   return (
-     <Router history={browserHistory}>
-      <Switch>
+  <Switch>
       <Route
         exact
         path="/"
@@ -114,8 +124,5 @@ import {
       /> 
       <Redirect to="/notfoundcover" />
     </Switch>
-     </Router>
-   );
- }
- 
+  */
  export default App;

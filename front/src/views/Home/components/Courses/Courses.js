@@ -115,7 +115,7 @@ const Courses = props => {
                       {item.address}
                     </Typography>
                   </Grid>
-                  <Grid item container justify="space-between" xs={12}>
+                  <Grid item container justifyContent="space-between" xs={12}>
                     <Grid item container xs={6} wrap="nowrap">
                       {item.reviews.map((review, index) => (
                         <Avatar
@@ -130,7 +130,7 @@ const Courses = props => {
                       item
                       container
                       alignItems="center"
-                      justify="flex-end"
+                      justifyContent="flex-end"
                       xs={6}
                     >
                       <NoSsr>

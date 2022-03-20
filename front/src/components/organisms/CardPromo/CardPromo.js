@@ -55,7 +55,7 @@ const CardPromo = props => {
         <Grid
           item
           container
-          justify={justifyGrid}
+          justifyContent={justifyGrid}
           xs={12}
           className="card-promo__icon-wrapper"
         >

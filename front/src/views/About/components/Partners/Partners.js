@@ -43,7 +43,7 @@ const Partners = props => {
             <Grid
               item
               container
-              justify="center"
+              justifyContent="center"
               alignItems="center"
               xs={4}
               key={index}

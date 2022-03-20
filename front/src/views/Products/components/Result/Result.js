@@ -14,6 +14,8 @@ import {
 import { Image } from 'components/atoms';
 import { CardProduct, SectionAlternate } from 'components/organisms';
 import CreditCardIcon from '@material-ui/icons/CreditCard';
+import {Tags } from '../Tags';
+import{tags} from '../../data'
 const useStyles = makeStyles(theme => ({
   pagePaddingTop: {
     padding: theme.spacing(3),
@@ -203,6 +205,9 @@ const Result = props => {
       
       <SectionAlternate className={classes.sectionAlternate}>
         <Grid container spacing={isMd ? 4 : 2}>
+          <Grid  item xs={12} container justifyContent='center'>
+            <Tags data={tags}/>
+          </Grid>
           <Grid item xs={12} container>
             <Typography variant="body1" className={classes.answerCount}>
               85 Result Found
@@ -228,7 +233,7 @@ const Result = props => {
               />
             </Grid>
           ))}
-          <Grid item xs={12} container justify="center">
+          <Grid item xs={12} container justifyContent="center">
             <Button
               variant="contained"
               color="primary"

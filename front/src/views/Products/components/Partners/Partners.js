@@ -46,7 +46,7 @@ const Partners = props => {
           data-aos="fade-up"
           align="center"
         />
-        <Grid container justify="space-between">
+        <Grid container justifyContent="space-between">
           {data.map((partner, index) => (
             <Grid item xs={6} sm={2} key={index}>
               <Image

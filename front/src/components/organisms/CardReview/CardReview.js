@@ -59,7 +59,7 @@ const CardReview = props => {
         <Grid
           item
           container
-          justify={justifyGrid}
+          justifyContent={justifyGrid}
           xs={12}
           className="card-review__icon-wrapper"
         >
@@ -78,7 +78,7 @@ const CardReview = props => {
         <Grid item xs={12} className="card-review__lits-container">
           <Grid
             container
-            justify={justifyGrid}
+            justifyContent={justifyGrid}
             className="card-review__list-wrapper"
           >
             <List disablePadding className="card-review__list">

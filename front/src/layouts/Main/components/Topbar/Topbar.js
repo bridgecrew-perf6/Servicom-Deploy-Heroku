@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
+import { Link } from "react-router-dom";
+
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Toolbar,
@@ -125,12 +127,13 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
  var pagesdict={} ;
   for (let i=0;i<pages.length;i++){
       if (pages[i]==='Home'){
-        pagesdict[pages[i]]='/'
+        pagesdict[pages[i]]=''
       }
       else{
         pagesdict[pages[i]]=pages[i].toLowerCase().replace(" ","");
       }
   }
+  console.log(pagesdict)
   return (
     <Toolbar disableGutters className={classes.toolbar} {...rest}>
       <div className={classes.logoContainer}>
@@ -156,15 +159,15 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
                   openedPopoverId === page ? classes.listItemActive : '',
                 )}
               >
-                <Typography
-                  variant="body1"
-                  color="textPrimary"
-                  component={'a'}
-                  href={pagesdict[page]}
-                  className={clsx(classes.listItemText, 'menu-item')}
-                >{page}
-                </Typography>
                 
+                <Link to={"/"+pagesdict[page]}>
+                  <Typography
+                    variant="body1"
+                    color="textPrimary"
+                    className={clsx(classes.listItemText, 'menu-item')}
+                  >{page}
+                  </Typography>
+                  </Link>
               </ListItem>
               
             </div>
@@ -218,4 +221,7 @@ Topbar.propTypes = {
   themeMode: PropTypes.string.isRequired,
 };
 
+/**
+ * 
+ */
 export default Topbar;

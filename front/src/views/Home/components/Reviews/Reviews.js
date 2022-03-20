@@ -69,7 +69,7 @@ const Reviews = props => {
             />
           </Grid>
         ))}
-        <Grid item container xs={12} justify="center">
+        <Grid item container xs={12} justifyContent="center">
           <Button variant="outlined" size="large" color="primary">
             See all reviews
           </Button>
