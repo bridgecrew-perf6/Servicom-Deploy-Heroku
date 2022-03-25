@@ -15,7 +15,9 @@ import {
   SigninSimple,
   SignupSimple,
   PasswordResetSimple,
-  About
+  About,
+  Account,
+  Product
 } from './views';
 
 const Routes = () => {
@@ -79,11 +81,22 @@ const Routes = () => {
       />
       <Route
         exact
-        path="/products"
+        path="/products/:category"
         render={matchProps => (
           <WithLayout
             {...matchProps}
             component={Products}
+            layout={MainLayout}
+          />
+        )}
+      />
+       <Route
+        exact
+        path="/products/product/:id"
+        render={matchProps => (
+          <WithLayout
+            {...matchProps}
+            component={Product}
             layout={MainLayout}
           />
         )}
@@ -95,6 +108,17 @@ const Routes = () => {
           <WithLayout
             {...matchProps}
             component={About}
+            layout={MainLayout}
+          />
+        )}
+      /> 
+      <Route
+        exact
+        path="/account"
+        render={matchProps => (
+          <WithLayout
+            {...matchProps}
+            component={Account}
             layout={MainLayout}
           />
         )}

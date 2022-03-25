@@ -3,7 +3,7 @@ const express = require('express');
 var bodyParser = require('body-parser');
 var pg =require('pg');
 const cors =require('cors')
-const path =require('path')
+const path =require('path');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -26,14 +26,6 @@ if(env=='production'){
 
 }
 
-
-
-
-
-
-
-
-
 var connectionString = process.env.DATABASE_URI
 const config = {
   connectionString:connectionString,
@@ -50,31 +42,93 @@ if (process.env.DATABASE_URI !== undefined) {
 
 var client = new pg.Pool(config);
 client.connect();
-app.get('/products', function(req, res) {
-  client.query('SELECT * FROM  salesforce.product2', function(error, data) {
-    //console.log(res.json(data.rows))
-    console.log("ghjkl")
+//products page
+app.get('/products/categories', function(req, res) {
+  client.query("select distinct(family) from salesforce.product2 ", function(error, data) {
+    if(error){
+      console.log("eee",error)
+    }
+    else{
+      res.json(data.rows)
+      //console.log(data.rows)
+    }
   });
 });
+app.get('/products/partners', function(req, res) {
+  client.query("select companyLogo__c,name,website from salesforce.account where companyLOgo__c<>'0' ;", function(error, data) {
+    if(error){
+      console.log("eee",error)
+    }
+    else{
+      res.json(data.rows)
+      //console.log(data.rows)
+    }
+  });
+});
+app.get('/products/:category', function(req, res) {
+  console.log("category",req.params.category)
+  
+    //const text="select createdbyid,CreatedDate ,unitprice,product2Id,(select name from salesforce.product2 where sfid=product2Id),(select family from salesforce.product2 where  sfid=product2Id),(select description from salesforce.product2 where sfid=product2Id),(select Picture_URL__c from salesforce.product2 where sfid=product2Id), (select name as username from salesforce.user where sfid=createdbyid),(select mediumphotourl from salesforce.user where sfid=createdbyid) from salesforce.pricebookentry where product2Id__r.family=$1 and  pricebook2Id='01s8d000003IM8RAAW'"
+   if(req.params.category==="all"){
+    const text="select pbe.sfid as pbesfid, pbe.createdbyid,pbe.createddate,pbe.unitprice ,pbe.product2Id ,p.Picture_URL__c, p.name , p.sfid ,p.family,p.description ,u.mediumphotourl , u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid  and pbe.pricebook2Id='01s8d000003IM8RAAW'"
+    //const values=[req.params.category]
+    client.query(text,function(error, data) {
+      if(error){
+        console.log("eee",error)
+      }
+      else{
+        console.log("if")
+        res.json(data.rows)
+        //console.log(data.rows)
+       
+      }
+    
+    })
+   }
+   else{
+    const text="select pbe.sfid as pbesfid, pbe.createdbyid,pbe.createddate,pbe.unitprice ,pbe.product2Id ,p.Picture_URL__c, p.name , p.sfid ,p.family,p.description ,u.mediumphotourl , u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid and p.family=$1 and pbe.pricebook2Id='01s8d000003IM8RAAW'"
+    const values=[req.params.category]
+    client.query(text,values, function(error, data) {
+      if(error){
+        console.log("eee",error)
+      }
+      else{
+        console.log("if")
+        res.json(data.rows)
+        //console.log(data.rows)
+       
+      }
+    });
+   }
+});
 
+//single product page 
+app.get('/products/product/:sfid',function(req,res){
+  const text="select pbe.sfid as pbesfid, pbe.createdbyid,pbe.createddate,pbe.unitprice ,pbe.product2Id ,p.numberOfSubcribers__c,p.family,p.Picture_URL__c, p.name,p.marketingQuote__c,p.otherimageslinks__c,p.subtitle__c,p.sfid,p.duration__c,p.numberOfUsers__c,p.sales_figure__c,p.provider__c,p.siteurl__c,p.tags__c,p.description ,u.mediumphotourl , u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where pbe.sfid=$1 and  p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid"
+  const values=[req.params.sfid]
+  //console.log("first",req.params.sfid)
+  client.query(text,values,function(error,data){
+    if(error){
+      console.log("error",error)
+    }
+    else{
+      res.json(data.rows)
+      console.log(data.rows)
+    }
+  })
+})
 
-
-
-
-/**
- * const productsRouter=require('./routes/productsRouter') 
-const homeRouter=require('./routes/homeRouter')
-const aboutusRouter=require('./routes/aboutusRouter')
-const signinRouter =require('./routes/signinRouter')
-const signupRouter=require('./routes/signupRouter')
-const passwordresetRouter=require('./routes/resetpasswordRouter');
-
- */
- //app.use(express.static(path.join(__dirname, 'front/build')));
-
- //app.use('/',homeRouter)
-
- //app.use('/aboutus',aboutusRouter)
- //app.use('/signin',signinRouter)
- //app.use('/signup',signupRouter)
- //app.use('./passwordreset',passwordresetRouter)
+app.get('/smilarproduct/:fam/:sfid',function(req,res){
+  const text="select pbe.createdbyid ,pbe.sfid as pbesfid ,pbe.createddate,pbe.product2Id,p.Picture_URL__c, p.name,p.subtitle__c,p.sfid,p.tags__c, u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where p.family=$1 and  p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid and pbe.pricebook2Id='01s8d000003IM8RAAW' and  pbe.sfid!=$2 Limit 3"
+  const values=[req.params.fam,req.params.sfid]
+  console.log("firssssst",req.params.fam ,req.params.sfid)
+  client.query(text,values,function(error,data){
+    if(error){
+      console.log("error",error)
+    }
+    else{
+      res.json(data.rows)
+      console.log("else",data.rows)
+    }
+  })
+})

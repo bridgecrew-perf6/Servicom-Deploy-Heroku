@@ -1,7 +1,8 @@
-import React, { useEffect ,useState} from 'react';
+import React, {useEffect,useState} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, Typography } from '@material-ui/core';
+import {  SectionAlternate } from 'components/organisms';
 
 const useStyles = makeStyles(theme => ({
   tags: {
@@ -32,30 +33,28 @@ const useStyles = makeStyles(theme => ({
   
 }));
 
-const Tags = props => {
-  const [tags,setTags]=useState([])
-  const useEffect =(()=>{
-    console.log("tags",tags)
-  },[])
-  const { data, className, ...rest } = props;
+const Tags = ({tags,className, ...rest }) => {
+  //const [tags, setTags]=useState(null)
+  
   const classes = useStyles();
 
   return (
-    <Box className={className} {...rest}>
+    <SectionAlternate sx={{width:'inherint'}} className={className} {...rest}>
      
       <Box className={classes.tags}>
-        {data.map((item, index) => (
+        {tags.map((item, index) => (
           <Typography
-            variant="body2"
-            color="primary"
-            className={classes.tag}
-            key={index}
-          >
-            {item}
-          </Typography>
+          variant="body2"
+          color="primary"
+          className={classes.tag}
+          key={index}
+        >
+          {item.tags__c.split(";")[0]}
+        </Typography>
         ))}
       </Box>
-    </Box>
+     {console.log("eaeae",tags)}
+    </SectionAlternate>
   );
 };
 
@@ -63,11 +62,12 @@ Tags.propTypes = {
   /**
    * External classes
    */
+  tags:PropTypes.array.isRequired,
   className: PropTypes.string,
+
   /**
    * data to be rendered
    */
-  data: PropTypes.array.isRequired,
 };
 
 export default Tags;

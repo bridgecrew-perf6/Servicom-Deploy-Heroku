@@ -130,10 +130,15 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
         pagesdict[pages[i]]=''
       }
       else{
-        pagesdict[pages[i]]=pages[i].toLowerCase().replace(" ","");
-      }
+        if(pages[i]==='Products'){
+          pagesdict[pages[i]]=pages[i].toLowerCase().replace(" ","")+'/all';
+        }
+        else{
+          pagesdict[pages[i]]=pages[i].toLowerCase().replace(" ","");
+             }
+        }
+        
   }
-  console.log(pagesdict)
   return (
     <Toolbar disableGutters className={classes.toolbar} {...rest}>
       <div className={classes.logoContainer}>
@@ -176,26 +181,30 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
             <DarkModeToggler themeMode={themeMode} onClick={() => themeToggler()} />
           </ListItem>
           <ListItem className={clsx(classes.listItem, 'menu-item--no-dropdown')}>
+          
+            <Link to="/signin">
             <Button
               variant="outlined"
-              component="a"
-              href="/signin"
               className={classes.listItemButton}
             >
-              sign in 
+                Sign in
             </Button>
+            </Link>
+            
           </ListItem>
           <ListItem className={clsx(classes.listItem, 'menu-item--no-dropdown')}>
-            <Button
+            
+              <Link to='/signup'>
+              <Button
               variant="contained"
               color="primary"
-              component="a"
               target="blank"
-              href="/signup"
               className={classes.listItemButton}
             >
-              sign up 
-            </Button>
+                sign up 
+                </Button>
+              </Link>
+        
           </ListItem>
         </List>
       </Hidden>

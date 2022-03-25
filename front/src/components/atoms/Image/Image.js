@@ -65,7 +65,7 @@ Image.propTypes = {
   /**
    * Source of the image
    */
-  src: PropTypes.string.isRequired,
+  src: PropTypes.string,
   /**
    * Source set for the responsive images
    */

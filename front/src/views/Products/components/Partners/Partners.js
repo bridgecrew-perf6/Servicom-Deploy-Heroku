@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
-import { Grid } from '@material-ui/core';
+import { makeStyles,useTheme } from '@material-ui/core/styles';
+import { Grid,useMediaQuery} from '@material-ui/core';
 import { Image } from 'components/atoms';
 import { SectionHeader } from 'components/molecules';
 
@@ -26,7 +25,27 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
   },
   logoImg: {
-    maxWidth: 100,
+    height:'120px',
+    width:'180px',
+  
+  },
+  logoImgMd: {
+    height:'120px',
+    width:'180px',
+    marginTop:25,
+    
+  
+  },
+  logoImgXs: {
+    height:'150px',
+    width:'250px',
+    marginTop:50,
+    //border:'2px solid red',
+    [theme.breakpoints.up('sm')]: {
+      paddingRight: theme.spacing(4),
+    },
+    
+  
   },
   fontWeight700: {
     fontWeight: 700,
@@ -36,29 +55,34 @@ const useStyles = makeStyles(theme => ({
 const Partners = props => {
   const { data, className, ...rest } = props;
   const classes = useStyles();
+  const theme = useTheme();
+  const isSm = useMediaQuery(theme.breakpoints.up('md'), {
+    defaultMatches: true,
+  });
 
   return (
-    <div className={clsx(classes.root, className)} data-aos="fade-up" {...rest}>
-      <div className={classes.copy}>
+    <div>
+      <div className={classes.copy} >
         <SectionHeader
           title="Our work has been featured"
           subtitle="We design & build products, tools, apps, and sites for companies trying to do great things for our planet."
           data-aos="fade-up"
           align="center"
         />
-        <Grid container justifyContent="space-between">
+        </div>
+        <Grid container  justifyContent={isSm?'space-between':'center'}>
           {data.map((partner, index) => (
-            <Grid item xs={6} sm={2} key={index}>
-              <Image
-                src={partner.logo}
+              <a href={partner.website} key={index}>
+                  <Image
+                className={isSm?classes.logoImg:classes.logoImgXs}
+                src={partner.companylogo__c}
                 alt={partner.name}
-                className={classes.logoImg}
-                lazy={false}
+                lazy={false}  
               />
-            </Grid>
+              </a>
           ))}
         </Grid>
-      </div>
+      
     </div>
   );
 };

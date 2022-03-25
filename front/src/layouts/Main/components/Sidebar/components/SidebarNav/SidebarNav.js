@@ -14,6 +14,8 @@ import {
   Box,
   IconButton,
 } from '@material-ui/core';
+import { Link } from "react-router-dom";
+
 import CloseIcon from '@material-ui/icons/Close';
 import { Image, } from 'components/atoms';
 import FacebookIcon from '@material-ui/icons/Facebook';
@@ -80,30 +82,36 @@ const SidebarNav = props => {
 
   const MenuGroup = props => {
     var pagesdict={} ;
-      for (let i=0;i<pages.length;i++){
-          if (pages[i]==='Home'){
-            pagesdict[pages[i]]='/'
-          }
-          else{
-            pagesdict[pages[i]]=pages[i].toLowerCase().replace(" ","");
-          }
+    for (let i=0;i<pages.length;i++){
+      if (pages[i]==='Home'){
+        pagesdict[pages[i]]=''
       }
+      else{
+        if(pages[i]==='Products'){
+          pagesdict[pages[i]]=pages[i].toLowerCase().replace(" ","")+'/all';
+        }
+        else{
+          pagesdict[pages[i]]=pages[i].toLowerCase().replace(" ","");
+             }
+        }
+        
+  }
     return (
       <List  dense>
       
         {pages.map((page, i) => (
           <>
           <ListItem  key={i} className={classes.listItem}>
+            <Link to={pagesdict[page]}>
             <Typography
               variant="h5"
-              component={'a'}
-              href={pagesdict[page]}
               color="textPrimary"
               gutterBottom
               onClick={() => onClose()}
             >
               {page}
-            </Typography>
+            </Typography>           
+            </Link>
           </ListItem>
            <ListItem className={classes.listItem}>
               <Divider className={classes.divider} />

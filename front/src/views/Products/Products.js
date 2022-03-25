@@ -3,35 +3,45 @@ import { Section} from 'components/organisms';
 import { Hero, Partners ,Result, } from './components';
 import axios from 'axios';
 
-import { partners,result} from './data';
+//import { partners} from './data';
 
 const Products = () => {
-  const [data, setData] = useState([]);
-  useEffect(() => {
-    const fetchData = async () => {
-      axios.get('http://localhost:8080/products')
-      .then(response => {
-        setData(response.data.rows);
-        //console.log(response.data.rows)
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-    };
-     fetchData()
+  const [tags, setTags] =useState([])
+  const [partners,setPartners]=useState([])
+  
+  useEffect(()=>{
+    axios.get('http://localhost:8080/products/categories')
+    .then(response => {
+      //setTags([{tags__c:"all"}].concat(response.data));
+      setTags([{family:'all'}].concat(response.data))
+      //console.log(response.data.rows)
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+  },[])
 
+useEffect(() => {
+  axios.get('http://localhost:8080/products/partners')
+  .then(response => {
+    setPartners(response.data);
+    //console.log(response.data.rows)
+  })
+  .catch((error) => {
+    console.log(error);
+  })
 },[]);
 return(
   <div>
-    {console.log("data",data)}
-    <Hero />
+    
+    <Hero/>
     <Section>
-      <Result data={result}/>
+      <Result  tags={tags}/>
       <Partners data={partners} />
     </Section>
 
   </div>
 );
 }
-
+//
 export default Products;

@@ -1,7 +1,9 @@
-import React from 'react';
+import React,{useState,useEffect} from 'react';
 import PropTypes from 'prop-types';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
+import axios from 'axios';
+import {Link} from 'react-router-dom'
 import {
   useMediaQuery,
   Button,
@@ -14,8 +16,6 @@ import {
 import { Image } from 'components/atoms';
 import { CardProduct, SectionAlternate } from 'components/organisms';
 import CreditCardIcon from '@material-ui/icons/CreditCard';
-import {Tags } from '../Tags';
-import{tags} from '../../data'
 const useStyles = makeStyles(theme => ({
   pagePaddingTop: {
     padding: theme.spacing(3),
@@ -134,34 +134,97 @@ const useStyles = makeStyles(theme => ({
     "&:before":{
       content: "\f00d",
     }
-  }
+  },
+  tag: {
+    padding: theme.spacing(1 / 2, 1),
+    color:'white',
+    border: `1px solid ${theme.palette.secondary.light}`,
+    fontWeight: 600,
+    borderRadius: theme.spacing(1),
+    background: `${theme.palette.secondary.light}`,
+    margin: theme.spacing(0, 1, 1, 0),
+    cursor: 'pointer',
+    [theme.breakpoints.up('md')]: {
+      margin: theme.spacing(0, 2, 2, 0),
+      padding: theme.spacing(1, 2),
+    },
+    '&:hover': {
+      color: `${theme.palette.secondary.main}`,
+      background: 'white',
+    },
+  },
+  tagClicked:{
+    color: `${theme.palette.secondary.main}`,
+    background: 'white',
+    padding: theme.spacing(1 / 2, 1),
+    border: `1px solid ${theme.palette.secondary.light}`,
+    fontWeight: 600,
+    borderRadius: theme.spacing(1),
+    margin: theme.spacing(0, 1, 1, 0),
+    cursor: 'pointer',
+    [theme.breakpoints.up('md')]: {
+      margin: theme.spacing(0, 2, 2, 0),
+      padding: theme.spacing(1, 2),
+    },
+  },
 }));
 
 const Result = props => {
-  const { data, className, ...rest } = props;
+  const {tags,className, ...rest } = props;
   const classes = useStyles();
+  const [productsloaded,setProductsLoaded]=useState(6)
+  const [tagClicked,setTagClicked]=useState(false)
+  const [data,setData]=useState([])
+  const [category,setCategory]=useState(window.location.pathname.substring(window.location.pathname.lastIndexOf('/'),window.location.pathname.length).replaceAll('%20',' '))
+  useEffect(() => {
+    axios.get('http://localhost:8080/products'+category)
+    .then(response => {
+      setData(response.data);
+      //console.log("ioi",response.data.rows)
+    })
+    .catch((error) => {
+      console.log(error);
+    })
 
+},[tagClicked]);
   const theme = useTheme();
   const isMd = useMediaQuery(theme.breakpoints.up('md'), {
     defaultMatches: true,
   });
+  const loadMore =()=>{
+    if(productsloaded<data.length){
+      setProductsLoaded(productsloaded+6)
+    }
+  }
+  const clickTagHandler=(item)=>{
+    
+    setCategory(item)
+    setTagClicked(!tagClicked)
+    //window.location='/products'+item
+    window.history.pushState('', '', '/products'+item)
 
+  }
   const BlogMediaContent = props => (
     <Image
-      {...props}
+      src={props.picture_url__c}
       className={classes.image}
-      lazyProps={{ width: '100%', height: '100%' }}
+      lazyProps={{ width: '100%', height: '250px' }}
     />
   );
 
   const BlogContent = props => (
     <div className={classes.blogContent}>
+      
       <Typography variant="h6" color="textPrimary" gutterBottom>
         {props.title}
       </Typography>
-      <Typography variant="body1" color="textSecondary">
-        {props.subtitle}
+      <Box overflow="hidden"
+        textOverflow="ellipsis"
+       >
+      <Typography variant="body1" color="textSecondary" >
+        {props.subtitle.substring(0,120)}......
       </Typography>
+      </Box>
       <div style={{ flexGrow: 1 }} />
       <div className={classes.priceCta} style={{border:'0px solid black'}}>
                   <Typography
@@ -169,17 +232,21 @@ const Result = props => {
                     variant="h5"
                     className={classes.fontWeightBold}
                   >
-                    $120
+                    ${props.price}
+                    
+
                   </Typography>
                   <Box>
                         <Button color="primary">
                           <CreditCardIcon/>
                         </Button>
-                        <Button>
-                        <ArrowRightAltIcon
+                        <Button onClick={()=>localStorage.setItem("family",props.family)}>
+                       <Link to={'/products/product/'+props.sfid}>
+                       <ArrowRightAltIcon
                           className={classes.icon}
-                          color={'secondary'}
+                          color={'secondary'}  
                         />
+                       </Link>
                     
                     </Button>
                   </Box>
@@ -188,13 +255,13 @@ const Result = props => {
       <Divider className={classes.divider} />
       <div className={classes.list}>
         <div className={classes.avatarContainer}>
-          <Avatar {...props.author.photo} className={classes.avatar} />
+          <Avatar  src={props.fullphotourl}  className={classes.avatar} />
           <Typography variant="body2" color="textPrimary">
-            {props.author.name}
+            {props.author}
           </Typography>
         </div>
         <Typography variant="overline" color="textSecondary">
-          {props.date}
+          {(new Date(props.date)).getDay()+"/"+(new Date(props.date)).getMonth()+"/"+(new Date(props.date)).getFullYear()}
         </Typography>
       </div>
     </div>
@@ -202,42 +269,77 @@ const Result = props => {
 
   return (
     <div className={className} {...rest}>
-      
       <SectionAlternate className={classes.sectionAlternate}>
-        <Grid container spacing={isMd ? 4 : 2}>
-          <Grid  item xs={12} container justifyContent='center'>
-            <Tags data={tags}/>
+      <Grid container spacing={isMd ? 4 : 2}>
+        {
+          isMd && 
+          
+          <Grid  item xs={12}  container >
+            <Box
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  width:'100%',
+                  borderRadius: 1,
+                }}
+                justifyContent={isMd ?'center':'flex-start'}
+              >
+          
+              {tags.map((item, index) => (
+                <Box  m={{xs:0.5,md:1}}  key={index} onClick={()=>clickTagHandler("/"+item.family)} > 
+                <Typography
+                variant="body2"
+                color="primary"
+                className={"/"+item.family===category ?classes.tagClicked:classes.tag}
+               
+              >
+                {item.family}
+              </Typography>
+              </Box>
+              ))}
+             </Box>
           </Grid>
+        }
+         
           <Grid item xs={12} container>
             <Typography variant="body1" className={classes.answerCount}>
-              85 Result Found
+              {data.length} Result Found
             </Typography>
           </Grid>
           {data.map((item, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index} data-aos="fade-up">
-              <CardProduct
+              <Grid item xs={12} sm={6} key={index} md={4} data-aos="fade-up">
+              {
+                 index <productsloaded &&
+                 <CardProduct
                 withShadow
                 liftUp
                 className={classes.cardProduct}
                 mediaContent={
-                  <BlogMediaContent {...item.cover} alt={item.title} />
+                  <BlogMediaContent {...item} alt={item.name} />
                 }
                 cardContent={
                   <BlogContent
-                    title={item.title}
-                    subtitle={item.subtitle}
-                    author={item.author}
-                    date={item.date}
+                    title={item.name}
+                    subtitle={item.description}
+                    author={item.username}
+                    date={item.createddate}
+                    fullphotourl={item.mediumphotourl}
+                    price={item.unitprice}
+                    sfid={item.pbesfid}
+                    family={item.family}
                   />
                 }
               />
+              }
             </Grid>
+            
           ))}
           <Grid item xs={12} container justifyContent="center">
             <Button
               variant="contained"
               color="primary"
               size="large"
+              onClick={()=>loadMore()}
               className={classes.button}
             >
               Load more
@@ -254,7 +356,9 @@ Result.propTypes = {
   /**
    * data to be rendered
    */
-  data: PropTypes.array.isRequired,
+  //data1: PropTypes.array.isRequired,
+  tags: PropTypes.array.isRequired,
+
   
 };
 
