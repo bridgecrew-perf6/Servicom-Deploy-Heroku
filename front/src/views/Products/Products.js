@@ -8,7 +8,7 @@ const Products = () => {
   const [partners,setPartners]=useState([])
   
   useEffect(()=>{
-    axios.get(process.env.REACT_APP_DOMAIN+'products/categories')
+    axios.get(process.env.REACT_APP_DOMAIN+'productss/categories')
     .then(response => {
       //setTags([{tags__c:"all"}].concat(response.data));
       setTags([{family:'all'}].concat(response.data))
@@ -20,7 +20,7 @@ const Products = () => {
   },[])
 
 useEffect(() => {
-  axios.get(process.env.REACT_APP_DOMAIN+'products/partners')
+  axios.get(process.env.REACT_APP_DOMAIN+'productss/partners')
   .then(response => {
     setPartners(response.data);
     //console.log(response.data.rows)

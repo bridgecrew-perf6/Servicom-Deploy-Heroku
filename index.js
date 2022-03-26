@@ -43,7 +43,7 @@ if (process.env.DATABASE_URI !== undefined) {
 var client = new pg.Pool(config);
 client.connect();
 //products page
-app.get('/products/categories', function(req, res) {
+app.get('/productss/categories', function(req, res) {
   client.query("select distinct(family) from salesforce.product2 ", function(error, data) {
     if(error){
       console.log("eee",error)
@@ -54,7 +54,7 @@ app.get('/products/categories', function(req, res) {
     }
   });
 });
-app.get('/products/partners', function(req, res) {
+app.get('/productss/partners', function(req, res) {
   client.query("select companyLogo__c,name,website from salesforce.account where companyLOgo__c<>'0' ;", function(error, data) {
     if(error){
       console.log("eee",error)
@@ -65,7 +65,7 @@ app.get('/products/partners', function(req, res) {
     }
   });
 });
-app.get('/products/:category', function(req, res) {
+app.get('/productss/:category', function(req, res) {
   console.log("category",req.params.category)
   
     //const text="select createdbyid,CreatedDate ,unitprice,product2Id,(select name from salesforce.product2 where sfid=product2Id),(select family from salesforce.product2 where  sfid=product2Id),(select description from salesforce.product2 where sfid=product2Id),(select Picture_URL__c from salesforce.product2 where sfid=product2Id), (select name as username from salesforce.user where sfid=createdbyid),(select mediumphotourl from salesforce.user where sfid=createdbyid) from salesforce.pricebookentry where product2Id__r.family=$1 and  pricebook2Id='01s8d000003IM8RAAW'"
@@ -103,7 +103,7 @@ app.get('/products/:category', function(req, res) {
 });
 
 //single product page 
-app.get('/products/product/:sfid',function(req,res){
+app.get('/productss/product/:sfid',function(req,res){
   const text="select pbe.sfid as pbesfid, pbe.createdbyid,pbe.createddate,pbe.unitprice ,pbe.product2Id ,p.numberOfSubcribers__c,p.family,p.Picture_URL__c, p.name,p.marketingQuote__c,p.otherimageslinks__c,p.subtitle__c,p.sfid,p.duration__c,p.numberOfUsers__c,p.sales_figure__c,p.provider__c,p.siteurl__c,p.tags__c,p.description ,u.mediumphotourl , u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where pbe.sfid=$1 and  p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid"
   const values=[req.params.sfid]
   //console.log("first",req.params.sfid)
