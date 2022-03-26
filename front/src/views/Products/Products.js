@@ -3,14 +3,12 @@ import { Section} from 'components/organisms';
 import { Hero, Partners ,Result, } from './components';
 import axios from 'axios';
 
-//import { partners} from './data';
-
 const Products = () => {
   const [tags, setTags] =useState([])
   const [partners,setPartners]=useState([])
   
   useEffect(()=>{
-    axios.get('https://nodev1.herokuapp.com/products/categories')
+    axios.get(process.env.REACT_APP_DOMAIN+'products/categories')
     .then(response => {
       //setTags([{tags__c:"all"}].concat(response.data));
       setTags([{family:'all'}].concat(response.data))
@@ -22,7 +20,7 @@ const Products = () => {
   },[])
 
 useEffect(() => {
-  axios.get('http://localhost:8080/products/partners')
+  axios.get(process.env.REACT_APP_DOMAIN+'products/partners')
   .then(response => {
     setPartners(response.data);
     //console.log(response.data.rows)
@@ -35,6 +33,7 @@ return(
   <div>
     
     <Hero/>
+    {console.log("domain",process.env.REACT_APP_DOMAIN)}
     <Section>
       <Result  tags={tags}/>
       <Partners data={partners} />

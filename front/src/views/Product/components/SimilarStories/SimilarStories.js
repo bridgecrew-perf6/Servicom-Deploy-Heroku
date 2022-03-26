@@ -5,8 +5,6 @@ import { Button, Typography, Grid } from '@material-ui/core';
 import { Image } from 'components/atoms';
 import { DescriptionCta } from 'components/molecules';
 import { CardProduct } from 'components/organisms';
-import { useEffect,useState} from 'react';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 const useStyles = makeStyles(theme => ({
   cardProduct: {

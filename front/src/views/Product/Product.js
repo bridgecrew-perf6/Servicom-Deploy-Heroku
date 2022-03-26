@@ -33,7 +33,7 @@ const Product = () => {
   const [fam,setFam]=useState(localStorage.getItem("family"))
   useEffect(()=>{
     console.log('wake up')
-    axios.get('http://localhost:8080/products/product'+sfid)
+    axios.get(process.env.REACT_APP_DOMAIN+'products/product'+sfid)
     .then(response => {
       setInfo(response.data[0])
     })
@@ -44,7 +44,7 @@ const Product = () => {
   },[])
   useEffect(()=>{
   
-    axios.get('http://localhost:8080/smilarproduct/'+fam+sfid)
+    axios.get(process.env.REACT_APP_DOMAIN+'smilarproduct/'+fam+sfid)
     .then(response => {
       setSimilar(response.data)
     })
