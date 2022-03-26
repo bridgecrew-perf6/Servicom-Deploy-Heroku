@@ -177,7 +177,7 @@ const Result = props => {
   const [data,setData]=useState([])
   const [category,setCategory]=useState(window.location.pathname.substring(window.location.pathname.lastIndexOf('/'),window.location.pathname.length).replaceAll('%20',' '))
   useEffect(() => {
-    axios.get(process.env.REACT_APP_DOMAIN+'productss'+category)
+    axios.get(process.env.REACT_APP_DOMAIN+'/productss'+category)
     .then(response => {
       setData(response.data);
       //console.log("ioi",response.data.rows)
