@@ -23,11 +23,7 @@ app.listen(PORT, () => {
 if (env==='production'){
   app.use(express.static(path.resolve(__dirname, "./front/build")));
 // Step 2:
-/**
- * app.get("*", function (request, response) {
-  response.sendFile(path.resolve(__dirname, "./front/build", "index.html"));
-});
- */
+
 }
 
 var connectionString = process.env.DATABASE_URI
@@ -136,3 +132,9 @@ app.get('/smilarproduct/:fam/:sfid',function(req,res){
     }
   })
 })
+if (env==='production'){
+  app.get("*", function (request, response) {
+  response.sendFile(path.resolve(__dirname, "./front/build", "index.html"));
+});
+ 
+}
