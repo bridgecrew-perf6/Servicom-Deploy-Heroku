@@ -6,6 +6,7 @@ const cors =require('cors')
 const path =require('path');
 const app = express();
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
@@ -13,17 +14,18 @@ app.use(bodyParser.json());
 
 env=process.env.NODE_ENV
 console.log(env)
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT ||8080;
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
   console.log('Press Ctrl+C to quit.');
 });
 
-if(env=='production'){
-  //app.use(express.static('front/build'));
-    //app.use('front/build', express.static(path.join(__dirname, 'front/build')))
-    app.use(express.static('front/build'));
-
+if (env==='production'){
+  app.use(express.static(path.resolve(__dirname, "./front/build")));
+// Step 2:
+app.get("*", function (request, response) {
+  response.sendFile(path.resolve(__dirname, "./front/build", "index.html"));
+});
 }
 
 var connectionString = process.env.DATABASE_URI
