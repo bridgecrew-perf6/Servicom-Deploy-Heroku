@@ -10,7 +10,7 @@ const Products = () => {
   const [partners,setPartners]=useState([])
   
   useEffect(()=>{
-    axios.get('http://localhost:8080/products/categories')
+    axios.get('https://nodev1.herokuapp.com/products/categories')
     .then(response => {
       //setTags([{tags__c:"all"}].concat(response.data));
       setTags([{family:'all'}].concat(response.data))
