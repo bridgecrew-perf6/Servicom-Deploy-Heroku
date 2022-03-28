@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
+import { Link } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -65,13 +66,13 @@ const LearnMoreLink = props => {
   );
 
   return (
-    <a
-      href={href}
+    <Link
+      to={href}
       className={clsx('learn-more-link', classes.root, className)}
       {...rest}
     >
       {children}
-    </a>
+    </Link>
   );
 };
 

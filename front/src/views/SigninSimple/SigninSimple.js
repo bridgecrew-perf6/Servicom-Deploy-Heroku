@@ -45,7 +45,7 @@ const SigninSimple = () => {
               variant: 'h3',
             }}
           />
-          <Form />
+          <Form/>
         </div>
       </Section>
     </div>

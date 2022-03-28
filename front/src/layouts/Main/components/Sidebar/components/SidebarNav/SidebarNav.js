@@ -97,12 +97,12 @@ const SidebarNav = props => {
         
   }
     return (
-      <List  dense>
+      <List dense>
       
         {pages.map((page, i) => (
-          <>
-          <ListItem  key={i} className={classes.listItem}>
-            <Link to={pagesdict[page]}>
+          <div  key={i} >
+          <ListItem className={classes.listItem}>
+            <Link to={"/"+pagesdict[page]}>
             <Typography
               variant="h5"
               color="textPrimary"
@@ -116,7 +116,7 @@ const SidebarNav = props => {
            <ListItem className={classes.listItem}>
               <Divider className={classes.divider} />
            </ListItem>
-          </>
+          </div>
         ))}
       </List>
     );
@@ -166,26 +166,27 @@ const SidebarNav = props => {
             
      
       <ListItem className={classes.listItem}>
+        <Link to={"/signin"} style={{width:'100%'}}>
         <Button
           variant="outlined"
           fullWidth
-          component="a"
-          href="/signin"
+          onClick={() => onClose()}
         >
           sing in 
         </Button>
+        </Link>
       </ListItem>
       <ListItem className={classes.listItem}>
+      <Link to={'/signup'} style={{width:'100%'}} > 
         <Button
           variant="contained"
           color="primary"
           fullWidth
-          component="a"
-          target="blank"
-          href="/signup"
+          onClick={() => onClose()}
         >
           sign up
         </Button>
+        </Link>
       </ListItem>
     </List>
   );

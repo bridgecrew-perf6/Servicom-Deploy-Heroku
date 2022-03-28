@@ -17,10 +17,7 @@ const Products = () => {
     .catch((error) => {
       console.log(error);
     })
-  },[])
-
-useEffect(() => {
-  axios.get(process.env.REACT_APP_DOMAIN+'/productss/partners')
+    axios.get(process.env.REACT_APP_DOMAIN+'/productss/partners')
   .then(response => {
     setPartners(response.data);
     //console.log(response.data.rows)
@@ -28,7 +25,9 @@ useEffect(() => {
   .catch((error) => {
     console.log(error);
   })
-},[]);
+  },[])
+
+
 return(
   <div>
     

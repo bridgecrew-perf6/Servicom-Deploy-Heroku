@@ -6,6 +6,7 @@ import { makeStyles, colors } from '@material-ui/core';
 const useStyles = makeStyles(theme => ({
   root: {
     position: 'relative',
+    marginLeft:theme.spacing(5),
   },
   border: {
     width: theme.spacing(5),

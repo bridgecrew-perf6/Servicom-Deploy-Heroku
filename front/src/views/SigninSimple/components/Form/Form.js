@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid, Button, TextField } from '@material-ui/core';
 import validate from 'validate.js';
 import { LearnMoreLink } from 'components/atoms';
-
+import axios from 'axios';
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
@@ -35,7 +35,9 @@ const Form = () => {
     touched: {},
     errors: {},
   });
-
+  const [result,setResult]=React.useState("")
+  const [added,setAdded]=React.useState(false)
+  const [exist,setExist]=React.useState(false)
   React.useEffect(() => {
     const errors = validate(formState.values, schema);
 
@@ -67,9 +69,25 @@ const Form = () => {
 
   const handleSubmit = event => {
     event.preventDefault();
-
     if (formState.isValid) {
-      window.location.replace('/');
+      const form=formState.values
+      console.log('form',form)
+      axios.post(process.env.REACT_APP_DOMAIN+'/signins',form)
+      .then(reslt=>{
+        setExist(false)
+        if(reslt.data.msg.indexOf('back')!==-1){
+          setAdded(true)
+          setResult(reslt.data.msg);
+          window.location.replace('/');
+        }
+        else{
+         setExist(true)
+          setResult(reslt.data.msg);
+        }
+        
+      })
+      .catch(err=>
+        console.log("signup err",err))
     }
 
     setFormState(formState => ({
@@ -138,6 +156,32 @@ const Form = () => {
               Send
             </Button>
           </Grid>
+          {added &&
+          <Grid item xs={12}>
+            <Button
+            size="large"
+            variant="contained"
+            type="submit"
+            style={{backgroundColor:'green',color:'white',fontWeight:900}}
+            fullWidth
+          >
+            {result}!
+          </Button>
+          </Grid>
+          }
+          {exist &&
+          <Grid item xs={12}>
+            <Button
+            size="large"
+            variant="contained"
+            type="submit"
+            style={{backgroundColor:'red',color:'white',fontWeight:900}}
+            fullWidth
+          >
+            {result}!!
+          </Button>
+          </Grid>
+          }
           <Grid item xs={12}>
             <Typography
               variant="subtitle1"

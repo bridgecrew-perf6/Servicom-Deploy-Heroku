@@ -28,11 +28,11 @@ const useStyles = makeStyles(theme => ({
 
 const Product = () => {
   const [info,setInfo]=useState([])
-  const [sfid,setSfid]=useState(window.location.pathname.substring(window.location.pathname.lastIndexOf('/'),window.location.pathname.length))
+  const sfid=(window.location.pathname.substring(window.location.pathname.lastIndexOf('/'),window.location.pathname.length))
   const [similar,setSimilar]=useState([])
-  const [fam,setFam]=useState(localStorage.getItem("family"))
+  const fam=(localStorage.getItem("family"))
   useEffect(()=>{
-    console.log('wake up')
+    
     axios.get(process.env.REACT_APP_DOMAIN+'/productss/product'+sfid)
     .then(response => {
       setInfo(response.data[0])
@@ -40,10 +40,6 @@ const Product = () => {
     .catch((error) => {
       console.log(error);
     })
-
-  },[])
-  useEffect(()=>{
-  
     axios.get(process.env.REACT_APP_DOMAIN+'/smilarproduct/'+fam+sfid)
     .then(response => {
       setSimilar(response.data)
@@ -51,7 +47,9 @@ const Product = () => {
     .catch((error) => {
       console.log(error);
     })
+
   },[])
+
   const classes = useStyles();
 
   return (

@@ -12,6 +12,7 @@ import {
   Typography,
   IconButton,
   Button,
+  Avatar,
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import { Image, DarkModeToggler } from 'components/atoms';
@@ -73,7 +74,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(2),
   },
   iconButton: {
-    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(1),
     padding: 0,
     '&:hover': {
       background: 'transparent',
@@ -84,16 +85,23 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.dark,
   },
   logoContainer: {
-    width: 100,
+    width: "100%",
     height: 28,
+    
     [theme.breakpoints.up('md')]: {
       width: 120,
       height: 32,
     },
+    [theme.breakpoints.down('md')]: {
+      marginLeft:50
+    },
+    
   },
   logoImage: {
     width: '100%',
     height: '100%',
+  
+    
   },
   menu: {
     display: 'flex',
@@ -141,15 +149,24 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
   }
   return (
     <Toolbar disableGutters className={classes.toolbar} {...rest}>
+      <Hidden mdUp>
+        <IconButton
+          className={classes.iconButton}
+          onClick={onSidebarOpen}
+          aria-label="Menu"
+        >
+          <MenuIcon />
+        </IconButton>
+      </Hidden>
       <div className={classes.logoContainer}>
-        <a href="/" title="thefront">
+        <Link to={'/'} >
           <Image
             className={classes.logoImage}
             src={themeMode === 'light' ? 'https://assets.maccarianagency.com/the-front/logos/logo.svg' : 'https://assets.maccarianagency.com/the-front/logos/logo-negative.svg'}
             alt="thefront"
             lazy={false}
           />
-        </a>
+        </Link>
       </div>
       <div className={classes.flexGrow} />
       <Hidden smDown>
@@ -210,13 +227,7 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
       </Hidden>
       <Hidden mdUp>
         <DarkModeToggler themeMode={themeMode} onClick={() => themeToggler()} />
-        <IconButton
-          className={classes.iconButton}
-          onClick={onSidebarOpen}
-          aria-label="Menu"
-        >
-          <MenuIcon />
-        </IconButton>
+        <Avatar alt={'th'} style={{marginRight:0,marginLeft:20,width:30,height:30}}/>
       </Hidden>
     </Toolbar>
   );

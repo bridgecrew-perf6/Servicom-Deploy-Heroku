@@ -5,10 +5,10 @@ var pg =require('pg');
 const cors =require('cors')
 const path =require('path');
 const app = express();
+const bcrypt =require('bcryptjs');
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
 
 
 
@@ -132,6 +132,64 @@ app.get('/smilarproduct/:fam/:sfid',function(req,res){
     }
   })
 })
+app.post('/signups', function(req, res) {
+  text='select name from salesforce.commercialExternalInfos__c where cin__c=$1 or email__c=$2'
+  values=[req.body.cin,req.body.email]
+  client.query(text,values,function(error,data){
+    if(error){
+      console.log("error",error)
+    }
+    else{
+      console.log("data.rows",data.rowCount)
+      if (data.rowCount===0){
+        const text = 'INSERT INTO salesforce.commercialExternalInfos__c (name,email__c,password__c,company__c,role__c,cin__c) VALUES($1,$2,$3,$4,$5,$6) RETURNING *'
+        const values=[req.body.firstName +" "+req.body.lastName,req.body.email,bcrypt.hashSync(req.body.password,12),req.body.company,req.body.role,req.body.cin]
+        client.query(text,values,function(error,data){
+          if(error){
+            console.log("error",error)
+          }
+          else{
+            console.log("user added")
+            res.json({msg:'user added'})
+          }
+        })
+      }
+      else{
+        console.log('user exist')
+        res.json({msg:'user exist'})
+      }
+    }
+  })
+
+});
+
+app.post('/signins',function(req,res){
+text="select name , email__c,password__c from  salesforce.commercialExternalInfos__c where email__c=$1"
+values=[req.body.email]
+client.query(text,values,function(error,data){
+
+if(error){
+  console.log("error",error)
+}
+else{
+  
+  if(data.rowCount===1 && bcrypt.compareSync(req.body.password,data.rows[0].password__c)){
+    res.json({msg:`welcome back ${data.rows.name}`})
+  }
+  else{
+    res.json({msg:'please verify your credentials '})
+  }
+}
+})
+})
+
+
+
+
+
+
+
+
 if (env==='production'){
   app.get("*", function (request, response) {
   response.sendFile(path.resolve(__dirname, "./front/build", "index.html"));

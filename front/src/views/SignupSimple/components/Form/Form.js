@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid, Button, TextField } from '@material-ui/core';
 import validate from 'validate.js';
 import { LearnMoreLink } from 'components/atoms';
-
+import axios from 'axios';
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
@@ -30,6 +30,25 @@ const schema = {
       maximum: 120,
     },
   },
+  company: {
+    presence: { allowEmpty: false, message: 'is required' },
+    length: {
+      maximum: 120,
+    },
+  },
+  cin: {
+    presence: { allowEmpty: false, message: 'is required' },
+    length: {
+      maximum: 20,
+      minimum:8,
+    },
+  },
+  role: {
+    presence: { allowEmpty: false, message: 'is required' },
+    length: {
+      maximum: 120,
+    },
+  },
   password: {
     presence: { allowEmpty: false, message: 'is required' },
     length: {
@@ -48,6 +67,9 @@ const Form = () => {
     errors: {},
   });
 
+  const [result,setResult]=React.useState("")
+  const [added,setAdded]=React.useState(false)
+  const [exist,setExist]=React.useState(false)
   React.useEffect(() => {
     const errors = validate(formState.values, schema);
 
@@ -81,7 +103,26 @@ const Form = () => {
     event.preventDefault();
 
     if (formState.isValid) {
-      window.location.replace('/');
+      const form=formState.values
+      console.log('form',form.password)
+      axios.post(process.env.REACT_APP_DOMAIN+'/signups',form)
+      .then(reslt=>{
+        setExist(false)
+        if(reslt.data.msg.indexOf('added')!==-1){
+          setAdded(true)
+          setResult(reslt.data.msg);
+          window.location.replace('/');
+        }
+        else{
+         setExist(true)
+          setResult(reslt.data.msg);
+        }
+        
+      })
+      .catch(err=>
+        console.log("signup err",err))
+      
+       
     }
 
     setFormState(formState => ({
@@ -98,6 +139,7 @@ const Form = () => {
 
   return (
     <div className={classes.root}>
+      {console.log('result',result)}
       <form name="password-reset-form" method="post" onSubmit={handleSubmit}>
         <Grid container spacing={2}>
           <Grid item xs={6}>
@@ -132,6 +174,51 @@ const Form = () => {
               onChange={handleChange}
               type="lastName"
               value={formState.values.lastName || ''}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              placeholder="Company"
+              label="Company *"
+              variant="outlined"
+              size="medium"
+              name="company"
+              fullWidth
+              helperText={hasError('company') ? formState.errors.company[0] : null}
+              error={hasError('company')}
+              onChange={handleChange}
+              type="company"
+              value={formState.values.company || ''}
+            />
+          </Grid>
+          <Grid item xs={6}>
+            <TextField
+              placeholder="Role"
+              label="Role *"
+              variant="outlined"
+              size="medium"
+              name="role"
+              fullWidth
+              helperText={hasError('role') ? formState.errors.role[0] : null}
+              error={hasError('role')}
+              onChange={handleChange}
+              type="role"
+              value={formState.values.role || ''}
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              placeholder="CIN"
+              label="CIN *"
+              variant="outlined"
+              size="medium"
+              name="cin"
+              fullWidth
+              helperText={hasError('cin') ? formState.errors.cin[0] : null}
+              error={hasError('cin')}
+              onChange={handleChange}
+              type="cin"
+              value={formState.values.cin || ''}
             />
           </Grid>
           <Grid item xs={12}>
@@ -173,6 +260,34 @@ const Form = () => {
               </Typography>
             </i>
           </Grid>
+          
+          {added &&
+          <Grid item xs={12}>
+            <Button
+            size="large"
+            variant="contained"
+            type="submit"
+            style={{backgroundColor:'green',color:'white',fontWeight:900}}
+            fullWidth
+          >
+            {result}!
+          </Button>
+          </Grid>
+          }
+          {exist &&
+          <Grid item xs={12}>
+            <Button
+            size="large"
+            variant="contained"
+            type="submit"
+            style={{backgroundColor:'red',color:'white',fontWeight:900}}
+            fullWidth
+          >
+            {result}!!
+          </Button>
+          </Grid>
+          }
+         
           <Grid item xs={12}>
             <Button
               size="large"

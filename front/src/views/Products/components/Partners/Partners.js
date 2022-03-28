@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Partners = props => {
-  const { data, className, ...rest } = props;
+  const { data} = props;
   const classes = useStyles();
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.up('md'), {
