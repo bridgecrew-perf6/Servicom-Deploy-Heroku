@@ -7,8 +7,8 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
-  Avatar,
 } from '@material-ui/core';
+import Avatar from '@material-ui/core/Avatar';
 import { SectionHeader } from 'components/molecules';
 import { Section, Parallax } from 'components/organisms';
 

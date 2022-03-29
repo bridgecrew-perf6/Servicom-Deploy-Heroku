@@ -7,12 +7,12 @@ import {Link} from 'react-router-dom'
 import {
   useMediaQuery,
   Button,
-  Avatar,
   Typography,
   Grid,
   Divider,
   Box,
 } from '@material-ui/core';
+import Avatar from '@material-ui/core/Avatar';
 import { Image } from 'components/atoms';
 import { CardProduct, SectionAlternate } from 'components/organisms';
 import CreditCardIcon from '@material-ui/icons/CreditCard';
