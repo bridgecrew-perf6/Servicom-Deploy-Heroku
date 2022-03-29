@@ -32,7 +32,6 @@ return(
   <div>
     
     <Hero/>
-    {console.log("domain",process.env.REACT_APP_DOMAIN)}
     <Section>
       <Result  tags={tags}/>
       <Partners data={partners} />

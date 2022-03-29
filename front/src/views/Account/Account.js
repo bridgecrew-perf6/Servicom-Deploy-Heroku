@@ -4,9 +4,9 @@ import { parse } from 'query-string';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, List, ListItem, Grid, Typography } from '@material-ui/core';
 import { SectionAlternate, CardBase } from 'components/organisms';
-import { Hero, General, Security, Notifications, Billing } from './components';
+import { Hero, General, Security, Wishlist, ShoppingCart, Contracts } from './components';
 import { Link } from 'react-router-dom';
-
+import axios from 'axios';
 const useStyles = makeStyles(theme => ({
   root: {
     height: '100%',
@@ -72,14 +72,19 @@ const subPages = [
     title: 'Security',
   },
   {
-    id: 'notifications',
-    href: '/account/?pid=notifications',
-    title: 'Notifications',
+    id: 'wishlist',
+    href: '/account/?pid=wishlist',
+    title: 'Wish List',
   },
   {
-    id: 'billing',
-    href: '/account/?pid=billing',
-    title: 'Billing Information',
+    id: 'shoppingcart',
+    href: '/account/?pid=shoppingcart',
+    title: 'Shopping Cart',
+  },
+  {
+    id: 'contracts',
+    href: '/account/?pid=contracts',
+    title: 'contracts',
   },
 ];
 
@@ -94,6 +99,19 @@ const TabPanel = props => {
 };
 
 const Account = (props = {}) => {
+  React.useEffect(()=>{
+    const config = {
+      headers:{
+        authorization:localStorage.getItem('jwt')
+        
+      }
+    };
+    const url =process.env.REACT_APP_DOMAIN+'/accounts';
+    
+    axios.get(url,config)
+    .then(reslt=>
+      console.log("reeeees",reslt))
+  })
   const classes = useStyles();
   let pageId = parse(window.location.search).pid || 'general';
 
@@ -137,11 +155,14 @@ const Account = (props = {}) => {
               <TabPanel value={pageId} index={'security'}>
                 <Security />
               </TabPanel>
-              <TabPanel value={pageId} index={'notifications'}>
-                <Notifications />
+              <TabPanel value={pageId} index={'wishlist'}>
+                <Wishlist/>
               </TabPanel>
-              <TabPanel value={pageId} index={'billing'}>
-                <Billing />
+              <TabPanel value={pageId} index={'shoppingcart'}>
+                <ShoppingCart />
+              </TabPanel>
+              <TabPanel value={pageId} index={'contracts'}>
+                <Contracts />
               </TabPanel>
             </CardBase>
           </Grid>

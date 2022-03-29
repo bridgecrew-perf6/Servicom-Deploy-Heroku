@@ -76,6 +76,8 @@ const Form = () => {
       .then(reslt=>{
         setExist(false)
         if(reslt.data.msg.indexOf('back')!==-1){
+          console.log(reslt.data)
+          localStorage.setItem('jwt',reslt.data.token)
           setAdded(true)
           setResult(reslt.data.msg);
           window.location.replace('/');

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
-
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Toolbar,
@@ -12,10 +11,11 @@ import {
   Typography,
   IconButton,
   Button,
-  Avatar,
+  Box
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import { Image, DarkModeToggler } from 'components/atoms';
+import { Profile } from '../Profile';
 
 const useStyles = makeStyles(theme => ({
   flexGrow: {
@@ -25,9 +25,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    ///border:'2px solid black',
+    marginRight:theme.spacing(3)
   },
   toolbar: {
-    zIndex: 999,
     maxWidth: theme.layout.contentWidth,
     width: '100%',
     margin: '0 auto',
@@ -130,7 +131,6 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
     setOpenedPopoverId(popoverId);
   };
 
-
   
  var pagesdict={} ;
   for (let i=0;i<pages.length;i++){
@@ -172,13 +172,13 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
       <Hidden smDown>
         <List disablePadding className={classes.navigationContainer}>
           {pages.map((page, i) => (
-            <div key={page}>
+            <div key={i}>
               <ListItem
                 aria-describedby={page.id}
                 onClick={e => handleClick(e, page)}
                 className={clsx(
-                  classes.listItem,
-                  openedPopoverId === page ? classes.listItemActive : '',
+                  classes.navLink,
+                  openedPopoverId === page ? classes.listItemActive : classes.navLink,
                 )}
               >
                 
@@ -195,21 +195,26 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
             </div>
           ))}
           <ListItem className={clsx(classes.listItem, 'menu-item--no-dropdown')}>
-            <DarkModeToggler themeMode={themeMode} onClick={() => themeToggler()} />
+            <DarkModeToggler themeMode={themeMode}  onClick={() => themeToggler()} />
           </ListItem>
-          <ListItem className={clsx(classes.listItem, 'menu-item--no-dropdown')}>
+         {
+           !localStorage.getItem("jwt") &&
+           <ListItem className={clsx(classes.listItem, 'menu-item--no-dropdown')}>
           
-            <Link to="/signin">
-            <Button
-              variant="outlined"
-              className={classes.listItemButton}
-            >
-                Sign in
-            </Button>
-            </Link>
-            
-          </ListItem>
-          <ListItem className={clsx(classes.listItem, 'menu-item--no-dropdown')}>
+           <Link to="/signin">
+           <Button
+             variant="outlined"
+             className={classes.listItemButton}
+           >
+               Sign in
+           </Button>
+           </Link>
+           
+         </ListItem>
+         }
+          {
+            !localStorage.getItem('jwt') &&
+            <ListItem className={clsx(classes.listItem, 'menu-item--no-dropdown')}>
             
               <Link to='/signup'>
               <Button
@@ -223,11 +228,34 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
               </Link>
         
           </ListItem>
+          }
         </List>
+        
+      { localStorage.getItem('jwt')&&
+       
+           <Profile themeMode={themeMode}/>
+        }
+        {localStorage.getItem('jwt')&&
+           <Box>
+              <Link to='/'>
+              <Button
+                variant="contained"
+                color="primary"
+                target="blank"
+                style={{width:'100%',fontWeight:600}}
+                onClick={()=>localStorage.removeItem("jwt")}
+               
+              >
+              log out
+              </Button>
+            </Link>
+           </Box>
+          }
+        
       </Hidden>
       <Hidden mdUp>
         <DarkModeToggler themeMode={themeMode} onClick={() => themeToggler()} />
-        <Avatar alt={'th'} style={{marginRight:0,marginLeft:20,width:30,height:30}}/>
+        <Profile/>
       </Hidden>
     </Toolbar>
   );

@@ -112,17 +112,20 @@ const Routes = () => {
           />
         )}
       /> 
-      <Route
-        exact
-        path="/account"
-        render={matchProps => (
-          <WithLayout
-            {...matchProps}
-            component={Account}
-            layout={MainLayout}
-          />
-        )}
-      /> 
+     {
+       localStorage.getItem('jwt')&&
+       <Route
+       exact
+       path="/account"
+       render={matchProps => (
+         <WithLayout
+           {...matchProps}
+           component={Account}
+           layout={MainLayout}
+         />
+       )}
+     /> 
+     }
       <Redirect to="/notfoundcover" />
 
     </Switch>

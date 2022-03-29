@@ -1,16 +1,18 @@
 require('dotenv').config();
 const express = require('express');
 var bodyParser = require('body-parser');
+const middleware=require('./middleware.js')
 var pg =require('pg');
 const cors =require('cors')
 const path =require('path');
-const app = express();
 const bcrypt =require('bcryptjs');
+const generateToken=require('./generateToken');
+
+const app = express();
+
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-
+app.use(bodyParser.urlencoded({extended: true}));
 
 env=process.env.NODE_ENV
 console.log(env)
@@ -77,7 +79,7 @@ app.get('/productss/:category', function(req, res) {
         console.log("eee",error)
       }
       else{
-        console.log("if")
+        //console.log("if")
         res.json(data.rows)
         //console.log(data.rows)
        
@@ -93,7 +95,7 @@ app.get('/productss/:category', function(req, res) {
         console.log("eee",error)
       }
       else{
-        console.log("if")
+        //console.log("if")
         res.json(data.rows)
         //console.log(data.rows)
        
@@ -132,6 +134,7 @@ app.get('/smilarproduct/:fam/:sfid',function(req,res){
     }
   })
 })
+
 app.post('/signups', function(req, res) {
   text='select name from salesforce.commercialExternalInfos__c where cin__c=$1 or email__c=$2'
   values=[req.body.cin,req.body.email]
@@ -149,8 +152,9 @@ app.post('/signups', function(req, res) {
             console.log("error",error)
           }
           else{
+            const token=generateToken(data.rows[0])
             console.log("user added")
-            res.json({msg:'user added'})
+            res.json({msg:'user added',token})
           }
         })
       }
@@ -164,7 +168,7 @@ app.post('/signups', function(req, res) {
 });
 
 app.post('/signins',function(req,res){
-text="select name , email__c,password__c from  salesforce.commercialExternalInfos__c where email__c=$1"
+text="select name , email__c,password__c ,cin__c from  salesforce.commercialExternalInfos__c where email__c=$1"
 values=[req.body.email]
 client.query(text,values,function(error,data){
 
@@ -174,7 +178,8 @@ if(error){
 else{
   
   if(data.rowCount===1 && bcrypt.compareSync(req.body.password,data.rows[0].password__c)){
-    res.json({msg:`welcome back ${data.rows.name}`})
+    const token=generateToken(data.rows[0])
+    res.json({msg:`welcome back ${data.rows[0].name}`,token})
   }
   else{
     res.json({msg:'please verify your credentials '})
@@ -183,11 +188,25 @@ else{
 })
 })
 
+app.use(middleware)
+app.get('/accounts',function(req,res){
+console.log("reqqqqq")
 
-
-
-
-
+})
+app.get('/userPhoto',function(req,res){
+console.log("reqToken",req.decodedToken)
+text="select name, profilephoto__c from  salesforce.commercialexternalinfos__c  where email__c=$1 "
+values=[req.decodedToken.email]
+client.query(text,values,function(error,data){
+  if (error){
+    console.log("error: ",error)
+  }
+  else{
+    //console.log('tooof',data.rows[0])
+    res.json(data.rows[0])
+  }
+})
+})
 
 
 if (env==='production'){
