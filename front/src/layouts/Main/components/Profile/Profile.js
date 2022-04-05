@@ -120,7 +120,7 @@ export default function Profile({themeMode}) {
             <ListItemIcon>
               <PermIdentityIcon className={classes.icon} sx={{color: themeMode==='dark'? 'white':'primary' }} />
             </ListItemIcon>
-              <Link to={'/account/?pid=general'} >
+              <Link to={'/account/?pid=infos'} >
                 <ListItemText primary="Your profile" className={classes.link}/>
               </Link>
           </ListItemButton>

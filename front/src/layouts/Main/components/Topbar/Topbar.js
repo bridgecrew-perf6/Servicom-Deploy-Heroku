@@ -255,12 +255,12 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
       </Hidden>
       <Hidden mdUp>
         <DarkModeToggler themeMode={themeMode} onClick={() => themeToggler()} />
-        <Profile/>
+        
       </Hidden>
     </Toolbar>
   );
 };
-
+///<Profile/> a7chiha  f ekher HIdden
 Topbar.propTypes = {
   className: PropTypes.string,
   onSidebarOpen: PropTypes.func,

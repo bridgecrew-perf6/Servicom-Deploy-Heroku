@@ -7,7 +7,6 @@ const cors =require('cors')
 const path =require('path');
 const bcrypt =require('bcryptjs');
 const generateToken=require('./generateToken');
-
 const app = express();
 
 app.use(cors());
@@ -72,7 +71,7 @@ app.get('/productss/:category', function(req, res) {
   
     //const text="select createdbyid,CreatedDate ,unitprice,product2Id,(select name from salesforce.product2 where sfid=product2Id),(select family from salesforce.product2 where  sfid=product2Id),(select description from salesforce.product2 where sfid=product2Id),(select Picture_URL__c from salesforce.product2 where sfid=product2Id), (select name as username from salesforce.user where sfid=createdbyid),(select mediumphotourl from salesforce.user where sfid=createdbyid) from salesforce.pricebookentry where product2Id__r.family=$1 and  pricebook2Id='01s8d000003IM8RAAW'"
    if(req.params.category==="all"){
-    const text="select pbe.sfid as pbesfid, pbe.createdbyid,pbe.createddate,pbe.unitprice ,pbe.product2Id ,p.Picture_URL__c, p.name , p.sfid ,p.family,p.description ,u.mediumphotourl , u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid  and pbe.pricebook2Id='01s8d000003IM8RAAW'"
+    const text="select pbe.sfid as pbesfid,pbe.Pricebook2__pricebookExternalId__c  , pbe.createdbyid,pbe.createddate,pbe.unitprice ,pbe.product2Id ,p.Picture_URL__c, p.name,p.numberOfUsers__c, p.sfid ,p.family,p.description ,u.mediumphotourl , u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid  and pbe.pricebook2Id='01s8d000003IM8RAAW'"
     //const values=[req.params.category]
     client.query(text,function(error, data) {
       if(error){
@@ -81,14 +80,14 @@ app.get('/productss/:category', function(req, res) {
       else{
         //console.log("if")
         res.json(data.rows)
-        //console.log(data.rows)
+        console.log(data.rows)
        
       }
     
     })
    }
    else{
-    const text="select pbe.sfid as pbesfid, pbe.createdbyid,pbe.createddate,pbe.unitprice ,pbe.product2Id ,p.Picture_URL__c, p.name , p.sfid ,p.family,p.description ,u.mediumphotourl , u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid and p.family=$1 and pbe.pricebook2Id='01s8d000003IM8RAAW'"
+    const text="select pbe.sfid as pbesfid,pbe.Pricebook2__pricebookExternalId__c ,  pbe.createdbyid,pbe.createddate,pbe.unitprice ,pbe.product2Id ,p.Picture_URL__c, p.name , p.sfid ,p.family,p.description ,u.mediumphotourl , u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid and p.family=$1 and pbe.pricebook2Id='01s8d000003IM8RAAW'"
     const values=[req.params.category]
     client.query(text,values, function(error, data) {
       if(error){
@@ -97,7 +96,7 @@ app.get('/productss/:category', function(req, res) {
       else{
         //console.log("if")
         res.json(data.rows)
-        //console.log(data.rows)
+        console.log(data.rows)
        
       }
     });
@@ -153,10 +152,12 @@ app.post('/signups', function(req, res) {
           }
           else{
             const token=generateToken(data.rows[0])
-            console.log("user added")
-            res.json({msg:'user added',token})
+           //add code here
+           res.json({msg:'user added',token})
+
           }
         })
+      
       }
       else{
         console.log('user exist')
@@ -189,14 +190,11 @@ else{
 })
 
 app.use(middleware)
-app.get('/accounts',function(req,res){
-console.log("reqqqqq")
-
-})
 app.get('/userPhoto',function(req,res){
-console.log("reqToken",req.decodedToken)
+//console.log("reqToken",req.decodedToken)
 text="select name, profilephoto__c from  salesforce.commercialexternalinfos__c  where email__c=$1 "
 values=[req.decodedToken.email]
+//console.log('photo',values)
 client.query(text,values,function(error,data){
   if (error){
     console.log("error: ",error)
@@ -208,6 +206,134 @@ client.query(text,values,function(error,data){
 })
 })
 
+app.get('/userInfos',function(req,res){
+  //console.log("reqToken",req.decodedToken)
+  text="select name, profilephoto__c,email__c,company__c,role__c,cin__c,bio__c from  salesforce.commercialexternalinfos__c  where email__c=$1 "
+  values=[req.decodedToken.email]
+  client.query(text,values,function(error,data){
+    if (error){
+      console.log("error: ",error)
+    }
+    else{
+      //console.log('tooof',data.rows[0])
+      res.json(data.rows[0])
+    }
+  })
+  })
+
+app.put('/userInfos',function(req,res){
+    console.log('put')
+    text="update  salesforce.commercialexternalinfos__c set name=$2,bio__c=$6,profilephoto__c=$7,email__c=$8,company__c=$4,role__c=$5,cin__c=$3 where email__c=$1 "
+    values=[req.decodedToken.email,req.body.fullname,req.body.cin,req.body.company,req.body.role,req.body.bio,req.body.photo,req.body.email]
+    client.query(text,values,function(error,data){
+      if (error){
+        console.log("error: ",error)
+      }
+      else{
+      
+      const token=generateToken({name:req.body.fullname,email__c:req.body.email})
+      console.log('tokkkkeeeen',token)
+      res.json({token})
+      }
+    })
+    })
+app.put('/userPassword',function(req,res){
+    //console.log('putpass')
+    console.log(req.body.newpassword)
+    text="select password__c from  salesforce.commercialexternalinfos__c  where email__c=$1 "
+    values=[req.decodedToken.email]
+    client.query(text,values,function(error,data){
+      if (error){
+        res.json({msg:'invalid password'})
+      }
+      else{
+        if (bcrypt.compareSync(req.body.currentpassword,data.rows[0].password__c)){
+          text="update salesforce.commercialexternalinfos__c set password__c=$2 where email__c=$1 "
+          values=[req.decodedToken.email,bcrypt.hashSync(req.body.newpassword,12)]
+          client.query(text,values,function(error,data){
+            if (error){
+              console.log("update password error: ",error)
+            }
+            else{
+              res.json({msg:'password updated!!'})
+            }
+          })
+        }
+      }
+     
+    })
+    })
+    
+app.delete('/deleteaccount',function(req,res){
+      //console.log('putdellllpass')
+      //console.log(req.body)
+      text="select password__c from  salesforce.commercialexternalinfos__c  where email__c=$1 "
+      values=[req.decodedToken.email]
+      client.query(text,values,function(error,data){
+        if (error){
+          res.json({msg:'invalid password'})
+        }
+        else{
+          if (bcrypt.compareSync(req.body.source,data.rows[0].password__c)){
+            text="delete from  salesforce.commercialexternalinfos__c  where email__c=$1 "
+            values=[req.decodedToken.email]
+            client.query(text,values,function(error,data){
+              if (error){
+                console.log("delete error: ",error)
+              }
+              else{
+               
+                res.json({msg:'account deleted!!'})
+              }
+            })
+          }
+        }
+       
+      })
+      })
+
+
+app.post('/wishlists', function(req, res) {
+              const text = 'INSERT INTO salesforce.OpportunityLineItem (opportunityProductExternalId__c,Description,Product2Id,UnitPrice,name,quantity,OpportunityId) VALUES($1,$2,$3,$4,$5,$6,(select sfid from salesforce.opportunity where opportunityExternalId__c=$7)) RETURNING *'
+              const values=[req.body.opportunityProductExternalId__c,req.body.Description,req.body.Product2Id,req.body.UnitPrice,req.body.name,req.body.Quantity,req.decodedToken.cin]
+              client.query(text,values,function(error,data){
+                if(error){
+                  console.log("error",error)
+                }
+                else{
+                 res.json({msg:'added to cart'})
+      
+                }
+              })
+              
+          
+      });
+app.get('/wishlists', function(req, res) {
+        const text="select name,description from salesforce.OpportunityLineItem where OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1)"
+        const values=[req.decodedToken.cin]
+        client.query(text,values,function(error,data){
+          if(error){
+            console.log("error",error)
+          }
+          else{
+          console.log("love",data.rows)
+           res.json(data.rows)
+
+          }
+        })
+        
+    
+});
+
+
+
+
+
+
+
+
+
+
 
 if (env==='production'){
   app.get("*", function (request, response) {
@@ -215,3 +341,17 @@ if (env==='production'){
 });
  
 }
+/**
+ *  const text1="insert into salesforce.opportunity (accountid,name,opportunityExternalId__c,Pricebook2Id,StageName,CloseDate) values((select sfid from salesforce.account where accountExternalId__c=$1),$2,$3,'01s8d000003IM8RAAW','Prospecting',$4) RETURNING *"
+            const values1=[req.body.cin,"Opportunity for "+req.body.firstName +" "+req.body.lastName,req.body.cin,"2022-12-31"]
+            client.query(text1,values1,function(error,data){
+              if(error){
+                console.log("error",error)
+              }
+              else{
+                console.log("user added")
+                res.json({msg:'user added',token})
+  
+              }
+            })
+ */

@@ -16,6 +16,8 @@ import Avatar from '@material-ui/core/Avatar';
 import { Image } from 'components/atoms';
 import { CardProduct, SectionAlternate } from 'components/organisms';
 import CreditCardIcon from '@material-ui/icons/CreditCard';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 const useStyles = makeStyles(theme => ({
   pagePaddingTop: {
     padding: theme.spacing(3),
@@ -172,6 +174,8 @@ const useStyles = makeStyles(theme => ({
 const Result = props => {
   const {tags,className, ...rest } = props;
   const classes = useStyles();
+  const [sfids,setSfids]=useState([])
+  const [addedtowishlist,setAddedtowishlist]=useState(true)
   const [productsloaded,setProductsLoaded]=useState(6)
   const [tagClicked,setTagClicked]=useState(false)
   const [data,setData]=useState([])
@@ -180,13 +184,40 @@ const Result = props => {
     axios.get(process.env.REACT_APP_DOMAIN+'/productss'+category)
     .then(response => {
       setData(response.data);
-      //console.log("ioi",response.data.rows)
     })
     .catch((error) => {
       console.log(error);
     })
 
 },[tagClicked]);
+useEffect(() => {
+  const config = {
+    headers:{
+      authorization:localStorage.getItem('jwt')
+      
+    }
+  };
+  const url =process.env.REACT_APP_DOMAIN+'/wishlists';
+  console.log('efrfrf')
+  axios.get(url,config)
+  .then(reslt=>{
+    var wl=[]
+    for(const res of reslt.data){
+      wl.push(res.split(";")[0])
+    }
+    setSfids(wl)
+    console.log("res",reslt.data)
+  })
+  .catch(err=>{
+    console.log("errr",err)
+    
+  
+  })
+
+
+},[addedtowishlist]);
+
+
   const theme = useTheme();
   const isMd = useMediaQuery(theme.breakpoints.up('md'), {
     defaultMatches: true,
@@ -200,7 +231,6 @@ const Result = props => {
     
     setCategory(item)
     setTagClicked(!tagClicked)
-    //window.location='/products'+item
     window.history.pushState('', '', '/products'+item)
 
   }
@@ -211,7 +241,34 @@ const Result = props => {
       lazyProps={{ width: '100%', height: '250px' }}
     />
   );
+  const wishListHandler= (product2id,price,numberOfUsers__c,title,picture_url__c,pbesfid)=>{
+    const form={
+      opportunityProductExternalId__c:Math.random()*Math.random()*Math.random()*Math.random()*Math.random(),
+      Description:pbesfid+";"+picture_url__c,
+      Product2Id:product2id,
+      UnitPrice:price,
+      name:title,
+      Quantity:numberOfUsers__c
+    }
+    const config = {
+      headers:{
+        authorization:localStorage.getItem('jwt')
+        
+      }
+    };
+    const url =process.env.REACT_APP_DOMAIN+'/wishlists';
+    console.log('efrfrf')
+    axios.post(url,form,config)
+    .then(reslt=>{
+      setAddedtowishlist(!addedtowishlist)
+    })
+    .catch(err=>{
+      console.log("errr",err)
+      
+    
+    })
 
+  }
   const BlogContent = props => (
     <div className={classes.blogContent}>
       
@@ -233,10 +290,20 @@ const Result = props => {
                     className={classes.fontWeightBold}
                   >
                     ${props.price}
-                    
-
                   </Typography>
                   <Box>
+                     {
+                       props.sfid in sfids ?
+                       (<Button color={'secondary'}>
+                         <FavoriteIcon/>
+                       </Button>)
+                       :
+                       (
+                        <Button color={'secondary'} onClick={()=>wishListHandler(props.product2id,props.price,props.numberOfUsers__c,props.title,props.picture_url__c,props.sfid)}>
+                        <FavoriteBorderIcon/>
+                        </Button>
+                       )
+                     }
                         <Button color="primary">
                           <CreditCardIcon/>
                         </Button>
@@ -327,8 +394,12 @@ const Result = props => {
                     price={item.unitprice}
                     sfid={item.pbesfid}
                     family={item.family}
+                    product2id={item.product2id}
+                    numberOfUsers__c={item.numberofusers__c}
+                    picture_url__c={item.picture_url__c}
                   />
                 }
+                
               />
               }
             </Grid>

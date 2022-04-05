@@ -43,6 +43,7 @@
     "history": "^4.9.0",
     "jarallax": "^1.12.1",
     "leaflet": "^1.6.0",
+    "material-ui-password-field": "^2.1.2",
     "material-ui-popup-state": "^2.0.0",
     "npm": "^7.4.2",
     "prop-types": "^15.7.2",

@@ -70,18 +70,21 @@ const SimilarStories = (props) => {
   const date=months[(new Date(props.dateAdded)).getMonth()]+"  " + (new Date(props.dateAdded)).getDate()+","+(new Date(props.dateAdded)).getFullYear()
   return(
     <Grid container justifyContent={'center'}>
+    {
+      props.tags &&
       <div className={classes.tags}>
-        {props.tags.split(';').map((item, index) => (
-          <Typography
-            variant="overline"
-            color="primary"
-            className={classes.tag}
-            key={index}
-          >
-            {item}
-          </Typography>
-        ))}
-      </div>
+      {props.tags.split(';').map((item, index) => (
+        <Typography
+          variant="overline"
+          color="primary"
+          className={classes.tag}
+          key={index}
+        >
+          {item}
+        </Typography>
+      ))}
+    </div>
+    }
       <Typography
         variant="h6"
         color="textPrimary"

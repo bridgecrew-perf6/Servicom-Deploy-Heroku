@@ -5,13 +5,13 @@ import {
   useMediaQuery,
   Grid,
   Typography,
-  TextField,
-  FormControlLabel,
-  Switch,
   Button,
   Divider,
 } from '@material-ui/core';
-
+import axios from 'axios';
+import PasswordField from 'material-ui-password-field'
+import validate from 'validate.js';
+import { set } from 'core-js/core/dict';
 const useStyles = makeStyles(theme => ({
   inputTitle: {
     fontWeight: 700,
@@ -27,24 +27,171 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const schema = {
+  currentpassword: {
+    presence: { allowEmpty: false, message: 'is required' },
+    length: {
+      minmum:8,
+      maximum: 300,
+    },
+  },
+  newpassword: {
+    presence: { allowEmpty: false, message: 'is required' },
+    length: {
+      minmum:8,
+      maximum: 120,
+    },
+  },
+  repeatpassword: {
+    presence: { allowEmpty: false, message: 'is required' },
+    length: {
+      minmum:8,
+      maximum: 120,
+    },
+  },
+}
 const Security = props => {
   const { className, ...rest } = props;
   const classes = useStyles();
+  const [formState, setFormState] = React.useState({
+    isValid: false,
+    values: {},
+    touched: {},
+    errors: {},
+  });
+  const[deleteacc,setDeleteacc]=React.useState("")
+  const[pass,setPass]=React.useState(false)
+  const[different,setDifferent]=React.useState(false)
+  const[invalidpass,setInvalidpass]=React.useState(false)
 
+  React.useEffect(() => {
+    const errors = validate(formState.values, schema);
+
+    setFormState(formState => ({
+      ...formState,
+      isValid: errors ? false : true,
+      errors: errors || {},
+    }));
+  }, [formState.values]);
+  const handleChange = event => {
+    event.persist();
+
+    setFormState(formState => ({
+      ...formState,
+      values: {
+        ...formState.values,
+        [event.target.name]:
+          event.target.type === 'checkbox'
+            ? event.target.checked
+            : event.target.value,
+      },
+      touched: {
+        ...formState.touched,
+        [event.target.name]: true,
+      },
+    }));
+  };
+  
+  const handleSubmit = event => {
+    event.preventDefault();
+    console.log('submit')
+    console.log(formState.isValid &&formState.values.newpassword===formState.values.repeatpassword)
+    setInvalidpass(false)
+    if (formState.isValid &&formState.values.newpassword===formState.values.repeatpassword) {
+      setDifferent(false)
+      const form=formState.values
+      const config = {
+        headers:{
+          authorization:localStorage.getItem('jwt')
+          
+        }
+      };
+      const url =process.env.REACT_APP_DOMAIN+'/userPassword';
+      console.log('efrfrf')
+      axios.put(url,form,config)
+      .then(reslt=>{
+        console.log(reslt)
+          window.location='/account/?pid=infos';
+        
+      })
+      .catch(err=>{
+        console.log("errr",err)
+        setInvalidpass(true)
+      
+      })
+       
+    }
+    else{
+      setDifferent(true)
+    }
+
+    setFormState(formState => ({
+      ...formState,
+      touched: {
+        ...formState.touched,
+        ...formState.errors,
+      },
+    }));
+  };
+
+  const hasError = field =>
+  formState.touched[field] && formState.errors[field] ? true : false;
   const theme = useTheme();
   const isMd = useMediaQuery(theme.breakpoints.up('md'), {
     defaultMatches: true,
   });
+  const handleDeleteSubmit = event=>{
+    event.preventDefault();
+    console.log("hds")
+    setPass(false)
+    if(deleteacc!=="" && deleteacc!==" "){
+    
+      const url =process.env.REACT_APP_DOMAIN+'/deleteaccount';
+      axios.delete(url,{
+        headers: {
+          Authorization: localStorage.getItem('jwt')
+        },
+        data: {
+          source: deleteacc
+        }
+      }
+        )
+      .then(reslt=>{
+          console.log(reslt)
+          localStorage.removeItem('jwt')
+          window.location='/';
+        
+      })
+      .catch(err=>{
+        console.log("errr",err)
+        setPass(true)
+      
+      })
+    }
+    else{
+      setPass(true)
+    }
+  }
+  const handleLogOut =()=>{
+    localStorage.removeItem('jwt')
+    window.location='/'
+  }
+  const handleDeleteChange = event => {
+    event.persist();
+    setDeleteacc(event.target.value)
+    console.log("first",deleteacc)
+  };
 
   return (
     <div className={className} {...rest}>
-      <Grid container spacing={isMd ? 4 : 2}>
+    <form name="password-reset-form" method="post" onSubmit={handleSubmit}>
+      <Grid container spacing={isMd ? 4 : 2} justifyContent='center'>
         <Grid item xs={12}>
           <div className={classes.titleCta}>
             <Typography variant="h6" color="textPrimary">
               Change Password
             </Typography>
-            <Button variant="outlined" color="primary">
+           <Button variant="outlined" color="primary" onClick={handleLogOut} >
               Log out
             </Button>
           </div>
@@ -60,16 +207,23 @@ const Security = props => {
           >
             Current password
           </Typography>
-          <TextField
-            placeholder="Old password"
+          <PasswordField
+            placeholder="Your current password"
             variant="outlined"
             size="medium"
-            name="fullname"
+            name="currentpassword"
             fullWidth
-            type="password"
+            
+            helpertext={
+              hasError('currentpassword') ? formState.errors.currentpassword[0] : null
+            }
+            error={hasError('currentpassword')}
+            onChange={handleChange}
+            type="currentpassword"
+            value={formState.values.currentpassword || ''}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} md={6}>
           <Typography
             variant="subtitle1"
             color="textPrimary"
@@ -77,16 +231,22 @@ const Security = props => {
           >
             New password
           </Typography>
-          <TextField
-            placeholder="New password"
+          <PasswordField
+            placeholder="new password"
             variant="outlined"
             size="medium"
-            name="fullname"
+            name="newpassword"
             fullWidth
-            type="password"
+            helpertext={
+              hasError('newpassword') ? formState.errors.newpassword[0] : null
+            }
+            error={hasError('newpassword')}
+            onChange={handleChange}
+            type="newpassword"
+            value={formState.values.newpassword || ''}
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} md={6}>
           <Typography
             variant="subtitle1"
             color="textPrimary"
@@ -94,62 +254,100 @@ const Security = props => {
           >
             Repeat password
           </Typography>
-          <TextField
-            placeholder="Repeat password"
+          <PasswordField
+            placeholder="repeat password"
             variant="outlined"
             size="medium"
-            name="fullname"
+            name="repeatpassword"
             fullWidth
-            type="password"
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <Divider />
-        </Grid>
-        <Grid item xs={12}>
-          <FormControlLabel
-            control={<Switch color="primary" defaultChecked />}
-            label={
-              <Typography
-                variant="subtitle1"
-                color="textPrimary"
-                className={classes.switchTitle}
-              >
-                Public Profile
-              </Typography>
+            helpertext={
+              hasError('repeatpassword') ? formState.errors.repeatpassword[0] : null
             }
-            labelPlacement="end"
+            error={hasError('repeatpassword')}
+            onChange={handleChange}
+            type="repeatpassword"
+            value={formState.values.repeatpassword || ''}
           />
         </Grid>
-        <Grid item xs={12}>
-          <Divider />
-        </Grid>
-        <Grid item xs={12}>
-          <FormControlLabel
-            control={<Switch color="primary" />}
-            label={
-              <Typography
-                variant="subtitle1"
-                color="textPrimary"
-                className={classes.switchTitle}
-              >
-                Expose your email
-              </Typography>
-            }
-            labelPlacement="end"
-          />
-        </Grid>
-        <Grid item container justifyContent="flex-start" xs={12}>
+       {
+         different &&
+         <Grid item xs={12}>
+         <Typography
+           variant="subtitle1"
+           style={{color:'red'}}
+           className={classes.inputTitle}
+         >
+           passwords should match
+         </Typography>
+       </Grid>
+       }
+       {
+         invalidpass &&
+         <Grid item xs={12}>
+         <Typography
+           variant="subtitle1"
+           style={{color:'red'}}
+           className={classes.inputTitle}
+         >
+          invalid password
+         </Typography>
+       </Grid>
+       }
+        <Grid item container justifyContent="flex-end" xs={12}>
           <Button
             variant="contained"
             type="submit"
             color="primary"
             size="large"
           >
-            save
+            update
           </Button>
         </Grid>
       </Grid>
+    </form>
+    <form name="password-reset-form" method="post" onSubmit={handleDeleteSubmit}>
+    <Grid container spacing={isMd ? 4 : 2}>
+    <Grid item xs={12}>
+            <Typography variant="h6" color="textPrimary">
+              Delete  account
+            </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Divider />
+        </Grid>
+        <Grid item xs={12} md={9}>
+        <PasswordField
+            placeholder="insert password"
+            variant="outlined"
+            size="medium"
+            name="deletepassword"
+            fullWidth
+            type="deletepassword"
+            onChange={handleDeleteChange}
+          />
+        </Grid>
+        
+        <Grid item xs={12} md={3}>
+          <div className={classes.titleCta}>
+            <Button variant="outlined" type="submit" color="primary">
+             delete account 
+            </Button>
+          </div>
+        </Grid>
+        {
+         pass &&
+         <Grid item xs={12}>
+         <Typography
+           variant="subtitle1"
+           style={{color:'red'}}
+           className={classes.inputTitle}
+         >
+          invalid password
+         </Typography>
+       </Grid>
+       }
+    </Grid>
+    </form>
     </div>
   );
 };

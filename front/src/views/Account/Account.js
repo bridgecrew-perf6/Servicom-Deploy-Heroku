@@ -4,7 +4,7 @@ import { parse } from 'query-string';
 import { makeStyles } from '@material-ui/core/styles';
 import { Box, List, ListItem, Grid, Typography } from '@material-ui/core';
 import { SectionAlternate, CardBase } from 'components/organisms';
-import { Hero, General, Security, Wishlist, ShoppingCart, Contracts } from './components';
+import { Hero, General, Security, Wishlist, ShoppingCart, Contracts,Infos } from './components';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 const useStyles = makeStyles(theme => ({
@@ -12,7 +12,7 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
     width: '100%',
   },
-  section: {
+  sectionnn: {
     '& .section-alternate__content': {
       paddingTop: 0,
       marginTop: theme.spacing(-5),
@@ -62,6 +62,11 @@ const useStyles = makeStyles(theme => ({
 
 const subPages = [
   {
+    id: 'infos',
+    href: '/account/?pid=infos',
+    title: 'Infos',
+  },
+  {
     id: 'general',
     href: '/account/?pid=general',
     title: 'General',
@@ -98,20 +103,7 @@ const TabPanel = props => {
   );
 };
 
-const Account = (props = {}) => {
-  React.useEffect(()=>{
-    const config = {
-      headers:{
-        authorization:localStorage.getItem('jwt')
-        
-      }
-    };
-    const url =process.env.REACT_APP_DOMAIN+'/accounts';
-    
-    axios.get(url,config)
-    .then(reslt=>
-      console.log("reeeees",reslt))
-  })
+const Account = () => {
   const classes = useStyles();
   let pageId = parse(window.location.search).pid || 'general';
 
@@ -149,6 +141,9 @@ const Account = (props = {}) => {
           </Grid>
           <Grid item xs={12} md={9}>
             <CardBase withShadow align="left">
+            <TabPanel value={pageId} index={'infos'}>
+                <Infos/>
+              </TabPanel>
               <TabPanel value={pageId} index={'general'}>
                 <General />
               </TabPanel>

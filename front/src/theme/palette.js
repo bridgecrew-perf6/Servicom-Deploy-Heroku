@@ -9,17 +9,24 @@ export const light = {
     "main": "#3f51b5",
     "light": "rgb(71, 145, 219)",
     "dark": "rgb(17, 82, 147)",
-    "contrastText": "#fff"
+    "contrastText": "#fff",
+    "danger":'#FF0000',
+  },
+  "danger":{
+    "main":'#FF0000'
   },
   "secondary": {
     "light": "#ffb74d",
     "main": "#f9b934",
     "dark": "#f57c00",
-    "contrastText": "rgba(0, 0, 0, 0.87)"
+    "contrastText": "rgba(0, 0, 0, 0.87)",
+
   },
   "text": {
     "primary": "#2d3748",
     "secondary": "#718096",
+    "danger":'#FF0000',
+    
   },
   "divider": "rgba(0, 0, 0, 0.12)",
   "background": {
@@ -46,13 +53,17 @@ export const dark = {
     "main": "#90caf9",
     "light": "rgb(166, 212, 250)",
     "dark": "rgb(100, 141, 174)",
-    "contrastText": "rgba(0, 0, 0, 0.87)"
+    "contrastText": "rgba(0, 0, 0, 0.87)",
+    "danger":'#FF0000',
   },
   'white':{
     'main':'#ffffff',
     "light": "rgb(166, 212, 250)",
     "dark": "rgb(100, 141, 174)",
     "contrastText": "rgba(0, 0, 0, 0.87)"
+  },
+  "danger":{
+    "main":'#FF0000'
   },
   "secondary": {
     "light": "#ffb74d",
@@ -63,6 +74,7 @@ export const dark = {
   "text": {
     "primary": "#EEEEEF",
     "secondary": "#AEB0B4",
+    "danger":'#FF0000',
   },
   "divider": "rgba(255, 255, 255, 0.12)",
   "background": {

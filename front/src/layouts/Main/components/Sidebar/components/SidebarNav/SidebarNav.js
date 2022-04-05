@@ -164,11 +164,14 @@ const SidebarNav = props => {
       </Box>
       </ListItem>
       <MenuGroup pages={pages}/>
-     <ListItem  className={classes.ItemButton} onClick={() => onClose()}>
+          {
+            localStorage.getItem('jwt') &&
+            <>
+             <ListItem  className={classes.ItemButton} onClick={() => onClose()}>
             <ListItemIcon>
               <PermIdentityIcon className={classes.icon} sx={{color: themeMode==='dark'? 'white':'primary' }} />
             </ListItemIcon>
-              <Link to={'/account/?pid=general'} >
+              <Link to={'/account/?pid=infos'} >
                 <ListItemText disableTypography={true}  primary="Your profile" className={classes.link}/>
               </Link>
           </ListItem>
@@ -208,6 +211,9 @@ const SidebarNav = props => {
           <ListItem className={classes.listItem}>
               <Divider className={classes.divider} />
            </ListItem>
+            </>
+          }
+          
       <ListItem>
                <Box my={-1} display={"flex"} justifyContent={'center'}  width={"100%"} >
                <IconButton href='https://www.facebook.com/' >
