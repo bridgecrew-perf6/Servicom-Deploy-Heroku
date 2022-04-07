@@ -36,11 +36,11 @@ const Wishlist = props => {
         
       }
     };
-    const url =process.env.REACT_APP_DOMAIN+'/wishlists';
+    const url =process.env.REACT_APP_DOMAIN+'/wishlistssingles';
     console.log('efrfrf')
     axios.get(url,config)
     .then(reslt=>{
-       console.log('reslt',reslt.data)
+       console.log('reslttttt',reslt.data)
        setData(reslt.data)
     })
     .catch(err=>{
@@ -50,7 +50,7 @@ const Wishlist = props => {
     })
   
   
-  },[addedtowishlist]);
+  },[]);
   const classes = useStyles();
 
   const theme = useTheme();
@@ -62,7 +62,7 @@ const Wishlist = props => {
   }
   return (
     <div className={className} {...rest}>
-        {console.log('dataaa',data)}
+       
       <SectionHeader
         title={
           <span>
@@ -81,7 +81,7 @@ const Wishlist = props => {
             item
             container
             data-aos={'fade-up'}
-            justify={isMd ? 'space-between' : 'center'}
+            justifyContent={isMd ? 'space-between' : 'center'}
             spacing={isMd ? 4 : 2}
             className={classes.listGrid}
             direction={'row-reverse' }

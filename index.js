@@ -135,7 +135,6 @@ app.get('/productss/product/:sfid',function(req,res){
 app.get('/smilarproduct/:fam/:sfid',function(req,res){
   const text="select pbe.createdbyid ,pbe.sfid as pbesfid ,pbe.createddate,pbe.product2Id,p.Picture_URL__c, p.name,p.subtitle__c,p.sfid,p.tags__c, u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where p.family=$1 and  p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid and pbe.pricebook2Id='01s8d000003IM8RAAW' and  pbe.sfid!=$2 Limit 3"
   const values=[req.params.fam,req.params.sfid]
-  console.log("firssssst",req.params.fam ,req.params.sfid)
   client.query(text,values,function(error,data){
     if(error){
       console.log("error",error)
@@ -244,9 +243,10 @@ app.put('/userInfos',function(req,res){
       }
       else{
       
-      const token=generateToken({name:req.body.fullname,email__c:req.body.email})
-      console.log('tokkkkeeeen',token)
-      res.json({token})
+      //const token=generateToken({name:req.body.fullname,email__c:req.body.email,cin:req.body.cin})
+      //console.log('tokkkkeeeen',token)
+      //res.json({token})
+      res.json({msg:'user updated'})
       }
     })
     })
@@ -352,9 +352,11 @@ app.post('/wishliststolineitem', function(req, res) {
                     })
                     })  ;
 app.get('/wishlists', function(req, res) {
-        const text="select p.name,p.duration__c,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p,salesforce.opportunity as o where p.sfid=op.Product2Id  and o.sfid=op.OpportunityId and o.name like '%(single)%'"
-        //const values=[req.decodedToken.cin]
-        client.query(text,function(error,data){
+        //and op.OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1)
+        const text="select p.name,p.duration__c,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p where p.sfid=op.Product2Id and op.OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1) "
+        const values=[req.decodedToken.cin]
+        console.log('cinnnn',values)
+        client.query(text,values,function(error,data){
           if(error){
             console.log("error",error)
           }
@@ -367,7 +369,22 @@ app.get('/wishlists', function(req, res) {
     
 });
 
+app.get('/wishlistssingles', function(req, res) {
+  //const text="select p.name,p.duration__c,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p where p.sfid=op.Product2Id and op.OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1) "
+  const text="select p.name,p.duration__c,op.sfid,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p,salesforce.opportunity as o where p.sfid=op.Product2Id  and o.sfid=op.OpportunityId and o.name like '%(single)%'"
+  //const values=[req.decodedToken.cin]
+  client.query(text,function(error,data){
+    if(error){
+      console.log("error",error)
+    }
+    else{
+     res.json(data.rows)
 
+    }
+  })
+  
+
+});
 
 if (env==='production'){
   app.get("*", function (request, response) {
@@ -376,5 +393,6 @@ if (env==='production'){
  
 }
 /**
- * 
+ *         const text="select p.name,p.duration__c,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p,salesforce.opportunity as o where p.sfid=op.Product2Id  and o.sfid=op.OpportunityId and o.name like '%(single)%'"
+
  */

@@ -63,10 +63,13 @@ const Product = () => {
     axios.get(url,config)
     .then(reslt=>{
       var wl=[]
+      console.log("res.descr",reslt.data)
       for(let res of reslt.data){
+        console.log("res.descr",res.description)
         wl.push(res.description.split(";")[0])
       }
       setSfids(wl)
+      console.log("wll",wl)
       
     })
     .catch(err=>{
@@ -110,13 +113,13 @@ const Product = () => {
         opportunityexternalid__c:reslt.data[0].opportunityexternalid__c
       }
       console.log("oppextid",form1.opportunityexternalid__c)
-      setTimeout(() => {
+      
         axios.post(url1,form1,config)
         .then(reslt=>
           console.log('then',reslt.data))
         .catch(err=>
           console.log(err))
-      }, 3000);
+      
       
     })
     .catch(err=>{

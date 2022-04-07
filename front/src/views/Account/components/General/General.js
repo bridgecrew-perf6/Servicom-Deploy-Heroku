@@ -39,13 +39,6 @@ const schema = {
       maximum: 120,
     },
   },
-  cin: {
-    presence: { allowEmpty: false, message: 'is required' },
-    length: {
-      maximum: 20,
-      minimum:8,
-    },
-  },
   role: {
     presence: { allowEmpty: false, message: 'is required' },
     length: {
@@ -97,7 +90,6 @@ const General = props => {
         ...formState,
         values:{
           fullname:reslt.data.name,
-          cin:reslt.data.cin__c,
           bio:reslt.data.bio__c,
           company:reslt.data.company__c,
           role:reslt.data.role__c,
@@ -134,9 +126,9 @@ const General = props => {
 
   const handleSubmit = event => {
     event.preventDefault();
-    console.log("f west l save")
+    //console.log("f west l save")
     if (formState.isValid) {
-      console.log("f west l if")
+      //console.log("f west l if")
       const form=formState.values
       const config = {
         headers:{
@@ -147,7 +139,8 @@ const General = props => {
       const url =process.env.REACT_APP_DOMAIN+'/userInfos';
       axios.put(url,form,config)
       .then(reslt=>{
-        localStorage.setItem('jwt',reslt.data.token)
+        //localStorage.removeItem('jwt')
+        //localStorage.setItem('jwt',reslt.data.token)
           window.location.replace('/account/?pid=infos');
         
       })
@@ -191,7 +184,7 @@ const General = props => {
         <Grid item xs={12}>
           <Divider />
         </Grid>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12} >
           <Typography
             variant="subtitle1"
             color="textPrimary"
@@ -214,29 +207,7 @@ const General = props => {
             value={formState.values.fullname || ""}
           />
         </Grid>
-        <Grid item xs={12} sm={6}>
-          <Typography
-            variant="subtitle1"
-            color="textPrimary"
-            className={classes.inputTitle}
-          >
-            CIN
-          </Typography>
-          <TextField
-            placeholder="Your cin "
-            variant="outlined"
-            size="medium"
-            name="cin"
-            fullWidth
-            helperText={
-              hasError('cin') ? formState.errors.cin[0] : null
-            }
-            error={hasError('cin')}
-            onChange={handleChange}
-            type="cin"
-            value={formState.values.cin ||" "}
-          />
-        </Grid>
+        
         <Grid item xs={12}>
           <Typography
             variant="subtitle1"
