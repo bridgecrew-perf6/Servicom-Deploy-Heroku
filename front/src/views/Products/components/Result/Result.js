@@ -198,15 +198,13 @@ useEffect(() => {
     }
   };
   const url =process.env.REACT_APP_DOMAIN+'/wishlists';
-  console.log('efrfrf')
   axios.get(url,config)
   .then(reslt=>{
     var wl=[]
-    for(const res of reslt.data){
-      wl.push(res.split(";")[0])
+    for(let res of reslt.data){
+      wl.push(res.description.split(";")[0])
     }
     setSfids(wl)
-    console.log("res",reslt.data)
   })
   .catch(err=>{
     console.log("errr",err)
@@ -243,7 +241,7 @@ useEffect(() => {
   );
   const wishListHandler= (product2id,price,numberOfUsers__c,title,picture_url__c,pbesfid)=>{
     const form={
-      opportunityProductExternalId__c:Math.random()*Math.random()*Math.random()*Math.random()*Math.random(),
+      opportunityProductExternalId__c:Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random() ,
       Description:pbesfid+";"+picture_url__c,
       Product2Id:product2id,
       UnitPrice:price,
@@ -257,10 +255,30 @@ useEffect(() => {
       }
     };
     const url =process.env.REACT_APP_DOMAIN+'/wishlists';
-    console.log('efrfrf')
     axios.post(url,form,config)
     .then(reslt=>{
       setAddedtowishlist(!addedtowishlist)
+      console.log('resl result',reslt.data)
+      //opportunityexternalid__c
+      const url1=process.env.REACT_APP_DOMAIN+'/wishliststolineitem';
+      const form1={
+        opportunityProductExternalId__c:Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random().toString().substring(0,18) ,
+        Description:pbesfid+";"+picture_url__c,
+        Product2Id:product2id,
+        UnitPrice:price,
+        name:title,
+        Quantity:numberOfUsers__c,
+        opportunityexternalid__c:reslt.data[0].opportunityexternalid__c
+      }
+      console.log("oppextid",form1.opportunityexternalid__c)
+      setTimeout(() => {
+        axios.post(url1,form1,config)
+        .then(reslt=>
+          console.log('then',reslt.data))
+        .catch(err=>
+          console.log(err))
+      }, 3000);
+      
     })
     .catch(err=>{
       console.log("errr",err)
@@ -293,7 +311,7 @@ useEffect(() => {
                   </Typography>
                   <Box>
                      {
-                       props.sfid in sfids ?
+                       sfids.indexOf(props.sfid )!==-1 ?
                        (<Button color={'secondary'}>
                          <FavoriteIcon/>
                        </Button>)

@@ -1,9 +1,13 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Grid, Button, TextField } from '@material-ui/core';
+import MenuItem from '@mui/material/MenuItem';
+
 import validate from 'validate.js';
 import { LearnMoreLink } from 'components/atoms';
 import axios from 'axios';
+
+
 const useStyles = makeStyles(theme => ({
   root: {
     width: '100%',
@@ -70,6 +74,19 @@ const Form = () => {
   const [result,setResult]=React.useState("")
   const [added,setAdded]=React.useState(false)
   const [exist,setExist]=React.useState(false)
+  const [partners,setPartners]=React.useState([])
+  
+  React.useEffect(()=>{
+    
+    axios.get(process.env.REACT_APP_DOMAIN+'/partners')
+  .then(response => {
+    setPartners(response.data);
+   
+  })
+  .catch((error) => {
+    console.log(error);
+  })
+  },[])
   React.useEffect(() => {
     const errors = validate(formState.values, schema);
 
@@ -168,6 +185,7 @@ const Form = () => {
               size="medium"
               name="lastName"
               fullWidth
+              
               helperText={
                 hasError('lastName') ? formState.errors.lastName[0] : null
               }
@@ -177,20 +195,25 @@ const Form = () => {
               value={formState.values.lastName || ''}
             />
           </Grid>
-          <Grid item xs={6}>
-            <TextField
-              placeholder="Company"
-              label="Company *"
-              variant="outlined"
-              size="medium"
-              name="company"
-              fullWidth
-              helperText={hasError('company') ? formState.errors.company[0] : null}
-              error={hasError('company')}
-              onChange={handleChange}
-              type="company"
-              value={formState.values.company || ''}
-            />
+          <Grid item xs={6}> 
+        <TextField
+          
+          select
+          name='company'
+          label="Company *"
+          style={{width:'100%'}}
+          value={formState.values.company || ''}
+          onChange={handleChange}
+          helperText={hasError('company') ? formState.errors.company[0] : null}
+          error={hasError('company')}
+        >
+          {partners.map((option,index) => (
+            <MenuItem key={index} value={option.name}>
+              {option.name}
+              {console.log('partners',partners)}
+            </MenuItem>
+          ))}
+        </TextField>
           </Grid>
           <Grid item xs={6}>
             <TextField

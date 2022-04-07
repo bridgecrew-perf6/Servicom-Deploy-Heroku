@@ -30,6 +30,8 @@ const Product = () => {
   const [info,setInfo]=useState([])
   const sfid=(window.location.pathname.substring(window.location.pathname.lastIndexOf('/'),window.location.pathname.length))
   const [similar,setSimilar]=useState([])
+  const [sfids,setSfids]=useState([])
+  const [addedtowishlist,setAddedtowishlist]=useState(true)
   const fam=(localStorage.getItem("family"))
   useEffect(()=>{
     
@@ -49,7 +51,81 @@ const Product = () => {
     })
 
   },[])
+  useEffect(() => {
+    const config = {
+      headers:{
+        authorization:localStorage.getItem('jwt')
+        
+      }
+    };
+    const url =process.env.REACT_APP_DOMAIN+'/wishlists';
+    console.log('efrfrf')
+    axios.get(url,config)
+    .then(reslt=>{
+      var wl=[]
+      for(let res of reslt.data){
+        wl.push(res.description.split(";")[0])
+      }
+      setSfids(wl)
+      
+    })
+    .catch(err=>{
+      console.log("errr",err)
+      
+    
+    })
+  
+  
+  },[addedtowishlist]);
+  
+  const wishListHandler= (product2id,price,numberOfUsers__c,title,picture_url__c,pbesfid)=>{
+    const form={
+      opportunityProductExternalId__c:Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random() ,
+      Description:pbesfid+";"+picture_url__c,
+      Product2Id:product2id,
+      UnitPrice:price,
+      name:title,
+      Quantity:numberOfUsers__c
+    }
+    const config = {
+      headers:{
+        authorization:localStorage.getItem('jwt')
+        
+      }
+    };
+    const url =process.env.REACT_APP_DOMAIN+'/wishlists';
+    axios.post(url,form,config)
+    .then(reslt=>{
+      setAddedtowishlist(!addedtowishlist)
+      console.log('resl result',reslt.data)
+      //opportunityexternalid__c
+      const url1=process.env.REACT_APP_DOMAIN+'/wishliststolineitem';
+      const form1={
+        opportunityProductExternalId__c:Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random().toString().substring(0,18) ,
+        Description:pbesfid+";"+picture_url__c,
+        Product2Id:product2id,
+        UnitPrice:price,
+        name:title,
+        Quantity:numberOfUsers__c,
+        opportunityexternalid__c:reslt.data[0].opportunityexternalid__c
+      }
+      console.log("oppextid",form1.opportunityexternalid__c)
+      setTimeout(() => {
+        axios.post(url1,form1,config)
+        .then(reslt=>
+          console.log('then',reslt.data))
+        .catch(err=>
+          console.log(err))
+      }, 3000);
+      
+    })
+    .catch(err=>{
+      console.log("errr",err)
+      
+    
+    })
 
+  }
   const classes = useStyles();
 
   return (
@@ -68,7 +144,7 @@ const Product = () => {
       <Section>
         <Grid container justifyContent='center'>
           <Grid item xs={12} md={10}>
-            <Content info={info} data={content} />
+            <Content info={info} data={content} wishListHandler={wishListHandler} sfids={sfids} />
           </Grid>
         </Grid>
       </Section>
@@ -80,4 +156,4 @@ const Product = () => {
   );
 };
 
-export default Product;
+export default Product

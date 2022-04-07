@@ -35,7 +35,8 @@ const SectionHeader = props => {
     title,
     titleVariant,
     subtitleVariant,
-    subtitle,
+    subtitle1,
+    subtitle2,
     subtitleColor,
     label,
     overline,
@@ -111,7 +112,7 @@ const SectionHeader = props => {
           {title}
         </Typography>
       </Grid>
-      {subtitle && (
+      {subtitle1 && (
         <Grid item xs={12} className="section-header__subtitle-wrapper">
           <Typography
             variant={subtitleVariant || 'h6'}
@@ -120,7 +121,20 @@ const SectionHeader = props => {
             className="section-header__subtitle"
             {...subtitleProps}
           >
-            {subtitle}
+            {subtitle1}
+          </Typography>
+        </Grid>
+      )}
+      {subtitle2 && (
+        <Grid item xs={12} className="section-header__subtitle-wrapper">
+          <Typography
+            variant={subtitleVariant || 'h6'}
+            align={align || 'center'}
+            color={subtitleColor || 'textSecondary'}
+            className="section-header__subtitle"
+            {...subtitleProps}
+          >
+            {subtitle2}
           </Typography>
         </Grid>
       )}
@@ -152,8 +166,8 @@ const SectionHeader = props => {
 };
 
 SectionHeader.defaultProps = {
-  titleVariant: 'h4',
-  labelProps: {},
+  titleVariant: 'h5',
+  labelProps: {variant:'h4'},
   titleProps: {},
   subtitleProps: {},
 };
@@ -170,7 +184,9 @@ SectionHeader.propTypes = {
   /**
    * Subtitle of the section header
    */
-  subtitle: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  subtitle1: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+  subtitle2: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
+
   /**
    * Label title of the section header
    */

@@ -56,13 +56,26 @@ app.get('/productss/categories', function(req, res) {
   });
 });
 app.get('/productss/partners', function(req, res) {
-  client.query("select companyLogo__c,name,website from salesforce.account where companyLOgo__c<>'0' ;", function(error, data) {
+  client.query("select companyLogo__c,name,website from salesforce.account where companyLOgo__c<>'0' and Type='Technology Partner' ;", function(error, data) {
     if(error){
       console.log("eee",error)
     }
     else{
+      console.log(data.rows)
       res.json(data.rows)
-      //console.log(data.rows)
+      
+    }
+  });
+});
+app.get('/partners', function(req, res) {
+  client.query("select  name from salesforce.account where  Type='Technology Partner' ;", function(error, data) {
+    if(error){
+      console.log("eee",error)
+    }
+    else{
+      console.log(data.rows)
+      res.json(data.rows)
+      
     }
   });
 });
@@ -80,7 +93,7 @@ app.get('/productss/:category', function(req, res) {
       else{
         //console.log("if")
         res.json(data.rows)
-        console.log(data.rows)
+        //console.log(data.rows)
        
       }
     
@@ -96,7 +109,7 @@ app.get('/productss/:category', function(req, res) {
       else{
         //console.log("if")
         res.json(data.rows)
-        console.log(data.rows)
+        //console.log(data.rows)
        
       }
     });
@@ -107,14 +120,14 @@ app.get('/productss/:category', function(req, res) {
 app.get('/productss/product/:sfid',function(req,res){
   const text="select pbe.sfid as pbesfid, pbe.createdbyid,pbe.createddate,pbe.unitprice ,pbe.product2Id ,p.numberOfSubcribers__c,p.family,p.Picture_URL__c, p.name,p.marketingQuote__c,p.otherimageslinks__c,p.subtitle__c,p.sfid,p.duration__c,p.numberOfUsers__c,p.sales_figure__c,p.provider__c,p.siteurl__c,p.tags__c,p.description ,u.mediumphotourl , u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where pbe.sfid=$1 and  p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid"
   const values=[req.params.sfid]
-  //console.log("first",req.params.sfid)
+  console.log("first",req.params.sfid)
   client.query(text,values,function(error,data){
     if(error){
       console.log("error",error)
     }
     else{
       res.json(data.rows)
-      console.log(data.rows)
+      //console.log(data.rows)
     }
   })
 })
@@ -129,7 +142,7 @@ app.get('/smilarproduct/:fam/:sfid',function(req,res){
     }
     else{
       res.json(data.rows)
-      console.log("else",data.rows)
+      //console.log("else",data.rows)
     }
   })
 })
@@ -301,22 +314,51 @@ app.post('/wishlists', function(req, res) {
                   console.log("error",error)
                 }
                 else{
-                 res.json({msg:'added to cart'})
-      
+                 //res.json({msg:'added to cart'})
+                
+                 
+                 const text1 = "INSERT INTO salesforce.Opportunity (name,closedate,Pricebook2Id,accountid,StageName,opportunityExternalId__c) VALUES($1,'2022-12-31','01s8d000003IM8RAAW',(select sfid from salesforce.Account where accountExternalId__c=$2),'Prospecting',$3) RETURNING *"
+                 const cin=Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()
+                 const values1=["Opportunity (single) for "+req.decodedToken.name,req.decodedToken.cin,cin]
+                 client.query(text1,values1,function(error,data){
+                if(error){
+                  console.log("error",error)
+                }
+                else{
+
+                      console.log(data.rows)
+                      res.json(data.rows)
+                    }
+
+                  })
+                  
                 }
               })
-              
-          
-      });
+      
+                
+              });
+
+app.post('/wishliststolineitem', function(req, res) {
+                const text5 = "INSERT INTO salesforce.OpportunityLineItem (opportunityProductExternalId__c,Description,Product2Id,UnitPrice,name,quantity,OpportunityId) VALUES($1,$2,$3,$4,$5,$6,(select sfid from salesforce.opportunity where name like '%(single)%' order by createddate desc limit 1 )) RETURNING *"
+                const values5=[req.body.opportunityProductExternalId__c,req.body.Description,req.body.Product2Id,req.body.UnitPrice,req.body.name,req.body.Quantity]
+                console.log('oprpofkrfr',req.body.opportunityexternalid__c)
+                client.query(text5,values5,function(error,data){
+                  if(error){
+                    console.log("error",error)
+                  }
+                  else{
+                    res.json(data.rows)
+                    }   
+                    })
+                    })  ;
 app.get('/wishlists', function(req, res) {
-        const text="select name,description from salesforce.OpportunityLineItem where OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1)"
-        const values=[req.decodedToken.cin]
-        client.query(text,values,function(error,data){
+        const text="select p.name,p.duration__c,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p,salesforce.opportunity as o where p.sfid=op.Product2Id  and o.sfid=op.OpportunityId and o.name like '%(single)%'"
+        //const values=[req.decodedToken.cin]
+        client.query(text,function(error,data){
           if(error){
             console.log("error",error)
           }
           else{
-          console.log("love",data.rows)
            res.json(data.rows)
 
           }
@@ -327,14 +369,6 @@ app.get('/wishlists', function(req, res) {
 
 
 
-
-
-
-
-
-
-
-
 if (env==='production'){
   app.get("*", function (request, response) {
   response.sendFile(path.resolve(__dirname, "./front/build", "index.html"));
@@ -342,16 +376,5 @@ if (env==='production'){
  
 }
 /**
- *  const text1="insert into salesforce.opportunity (accountid,name,opportunityExternalId__c,Pricebook2Id,StageName,CloseDate) values((select sfid from salesforce.account where accountExternalId__c=$1),$2,$3,'01s8d000003IM8RAAW','Prospecting',$4) RETURNING *"
-            const values1=[req.body.cin,"Opportunity for "+req.body.firstName +" "+req.body.lastName,req.body.cin,"2022-12-31"]
-            client.query(text1,values1,function(error,data){
-              if(error){
-                console.log("error",error)
-              }
-              else{
-                console.log("user added")
-                res.json({msg:'user added',token})
-  
-              }
-            })
+ * 
  */

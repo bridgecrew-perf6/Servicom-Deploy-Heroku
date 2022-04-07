@@ -3,6 +3,8 @@ import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { SectionAlternate } from 'components/organisms';
 import { DescriptionCta } from 'components/molecules';
 import { Button, Typography, Grid ,Box,useMediaQuery,Divider} from '@material-ui/core';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 
 const useStyles = makeStyles(theme => ({
@@ -26,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
   }));
   
-export default function InfoCard({info}) {
+export default function InfoCard({info,sfids,wishListHandler}) {
     const classes =useStyles();
     const theme = useTheme();
     const isSm = useMediaQuery(theme.breakpoints.up('sm'), {
@@ -37,9 +39,27 @@ export default function InfoCard({info}) {
         <DescriptionCta
         title="Service informations "
         primaryCta={
+          <>
+           {
+             sfids.indexOf(info.pbesfid)!==-1?
+             (
+              <Button color={'primary'}>
+                         <FavoriteIcon/>
+                       </Button>
+          )
+             :
+             (
+             <Button color="primary" onClick={()=>wishListHandler(info.product2id,info.unitprice,info.numberofusers__c,info.name,info.picture_url__c,info.pbesfid)}>
+              <FavoriteBorderIcon fontSize={'large'}/>
+              {console.log('sfidddssss',sfids)}
+            </Button>
+             )
+           }
           <Button variant="outlined" color="primary" size={isSm ?"large":"small"}>
             Add to card 
           </Button>
+          </>
+          
         }
         align={'left'}
         titleProps={{

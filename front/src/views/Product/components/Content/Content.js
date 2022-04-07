@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const Content = props => {
-  const {info,data, className, ...rest } = props;
+  const {info,data,sfids,wishListHandler,className, ...rest } = props;
   
 
   const classes = useStyles();
@@ -48,7 +48,9 @@ const Content = props => {
   const theme = useTheme();
   const isMd = useMediaQuery(theme.breakpoints.up('md'), {
     defaultMatches: true,
+    
   });
+
   return (
     <div className={className} {...rest}>
       <div className={classes.section}>
@@ -94,7 +96,7 @@ const Content = props => {
           <PinterestIcon />
         </IconButton>
       </div>
-      <InfoCard info={info}/>
+      <InfoCard info={info} sfids={sfids} wishListHandler={wishListHandler} />
       <div className={classes.section}>
        {
           info.otherimageslinks__c &&
