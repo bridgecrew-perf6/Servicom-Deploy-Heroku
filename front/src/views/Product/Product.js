@@ -59,7 +59,6 @@ const Product = () => {
       }
     };
     const url =process.env.REACT_APP_DOMAIN+'/wishlists';
-    console.log('efrfrf')
     axios.get(url,config)
     .then(reslt=>{
       var wl=[]
@@ -101,25 +100,7 @@ const Product = () => {
     .then(reslt=>{
       setAddedtowishlist(!addedtowishlist)
       console.log('resl result',reslt.data)
-      //opportunityexternalid__c
-      const url1=process.env.REACT_APP_DOMAIN+'/wishliststolineitem';
-      const form1={
-        opportunityProductExternalId__c:Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random().toString().substring(0,18) ,
-        Description:pbesfid+";"+picture_url__c,
-        Product2Id:product2id,
-        UnitPrice:price,
-        name:title,
-        Quantity:numberOfUsers__c,
-        opportunityexternalid__c:reslt.data[0].opportunityexternalid__c
-      }
-      console.log("oppextid",form1.opportunityexternalid__c)
-      
-        axios.post(url1,form1,config)
-        .then(reslt=>
-          console.log('then',reslt.data))
-        .catch(err=>
-          console.log(err))
-      
+
       
     })
     .catch(err=>{

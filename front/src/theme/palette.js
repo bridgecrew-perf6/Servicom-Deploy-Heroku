@@ -53,7 +53,7 @@ export const dark = {
     "main": "#90caf9",
     "light": "rgb(166, 212, 250)",
     "dark": "rgb(100, 141, 174)",
-    "contrastText": "rgba(0, 0, 0, 0.87)",
+    "": "rgba(0, 0, 0, 0.87)",
     "danger":'#FF0000',
   },
   'white':{

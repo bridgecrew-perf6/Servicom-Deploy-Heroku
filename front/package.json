@@ -36,6 +36,8 @@
     "@material-ui/pickers": "^3.2.10",
     "@material-ui/styles": "^4.2.1",
     "@mui/icons-material": "^5.5.1",
+    "@stripe/react-stripe-js": "^1.7.1",
+    "@stripe/stripe-js": "^1.27.0",
     "aos": "^2.3.4",
     "axios": "^0.26.1",
     "clsx": "^1.0.4",

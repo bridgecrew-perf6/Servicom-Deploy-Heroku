@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Divider, useMediaQuery } from '@material-ui/core';
 import { Grid, Button, Avatar, Typography } from '@material-ui/core';
-import { Image, LearnMoreLink } from 'components/atoms';
 import { SectionHeader } from 'components/molecules';
 import axios from 'axios';
+
 
 const useStyles = makeStyles(theme => ({
   teamAvatar: {
@@ -26,8 +26,8 @@ const useStyles = makeStyles(theme => ({
 
 const Wishlist = props => {
   const { className, ...rest } = props;
-  const [addedtowishlist,setAddedtowishlist]=React.useState(true)
   const [data,setData]=React.useState([])
+  const [refresh,setRefresh]=React.useState(true)
 
   React.useEffect(() => {
     const config = {
@@ -37,10 +37,10 @@ const Wishlist = props => {
       }
     };
     const url =process.env.REACT_APP_DOMAIN+'/wishlistssingles';
-    console.log('efrfrf')
+    
     axios.get(url,config)
     .then(reslt=>{
-       console.log('reslttttt',reslt.data)
+      
        setData(reslt.data)
     })
     .catch(err=>{
@@ -50,7 +50,7 @@ const Wishlist = props => {
     })
   
   
-  },[]);
+  },[refresh]);
   const classes = useStyles();
 
   const theme = useTheme();
@@ -58,6 +58,70 @@ const Wishlist = props => {
     defaultMatches: true,
   });
   const deleteAll = ()=>{
+
+    const url =process.env.REACT_APP_DOMAIN+'/allwishlistitem';
+    axios.delete(url,{
+      headers: {
+        Authorization: localStorage.getItem('jwt')
+      },
+    
+    }
+      )
+    .then(reslt=>{
+        setRefresh(!refresh)
+      
+    })
+    .catch(err=>{
+      console.log("errr",err)
+    })
+    
+  }
+
+  const bookNow =()=>{
+    const oppform={
+      oppExternalId__c:(Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*100000).toString() ,
+      name:Math.random()*Math.random()*Math.random()*Math.random().toString(),
+      
+    }
+    const config = {
+      headers:{
+        authorization:localStorage.getItem('jwt')
+        
+      }
+    };
+    const oppurl =process.env.REACT_APP_DOMAIN+'/insertopportunity';
+    axios.post(oppurl,oppform,config)
+    .then(reslt=>{
+      console.log(reslt.data)
+    })
+    .catch(err=>{
+      console.log("errr",err)
+      
+    
+    })
+  }
+  const deleteItem =(sfid,opportunityId)=>{
+    const url =process.env.REACT_APP_DOMAIN+'/wishlistitem';
+    axios.delete(url,{
+      headers: {
+        Authorization: localStorage.getItem('jwt')
+      },
+      data: {
+        sfid:sfid,
+        opportunityId:opportunityId
+
+      }
+    }
+      )
+    .then(reslt=>{
+        setRefresh(!refresh)
+      
+    })
+    .catch(err=>{
+      console.log("errr",err)
+     
+    
+    })
     
   }
   return (
@@ -86,25 +150,19 @@ const Wishlist = props => {
             className={classes.listGrid}
             direction={'row-reverse' }
           >
-              {console.log('item',item)}
+              
             <Grid item container xs={12} sm={12} md={7} alignItems="center">
               <SectionHeader
                 label={item.name}
-                title={"Pack price : "+ item.unitprice+"$"}
+                title={"Pack price : "+ item.unitprice*item.quantity+"$"}
                 subtitle1={"Quantity : "+item.quantity+" persons"}
                 subtitle2={item.duration__c!==null?"Duration: "+item.duration__c+" months":undefined}
                 ctaGroup={[
                   <Button
-                    variant="outlined"
-                    color="secondary"
-                    size={isMd ? 'large' : 'medium'}
-                  >
-                    Book now
-                  </Button>,
-                  <Button
                   variant="outlined"
                   color="primary"
                   size={isMd ? 'large' : 'medium'}
+                  onClick={()=>deleteItem(item.sfid,item.opportunityid)}
                 >
                   delete service
                 </Button>,
@@ -137,9 +195,9 @@ const Wishlist = props => {
                     variant="outlined"
                     color="secondary"
                     size={isMd ? 'large' : 'medium'}
-                    
+                    onClick={bookNow}
                     >
-                    Book all  now
+                    Book  now!
                   </Button>
         
            <Button
@@ -171,5 +229,5 @@ Wishlist.propTypes = {
 
 export default Wishlist;
 /**
- *  
+ *  Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()
  */

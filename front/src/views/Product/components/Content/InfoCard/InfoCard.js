@@ -122,7 +122,7 @@ export default function InfoCard({info,sfids,wishListHandler}) {
           Price :
         </Typography>
         <Typography color='textPrimary'  component="p" variant="h6"  style={{ marginLeft:'10px'}}>
-          {info.unitprice}
+          {info.unitprice*info.numberofusers__c+' $'}
         </Typography>
           </Box>
           <Divider/>

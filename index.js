@@ -12,6 +12,10 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+const secretKey = "sk_test_5xcidfSM2RvPXFD4xLaeC4Eu00YOAYlMo0";
+const stripe = require("stripe")(secretKey);
+
+
 
 env=process.env.NODE_ENV
 console.log(env)
@@ -41,7 +45,7 @@ if (process.env.DATABASE_URI !== undefined) {
   pg.defaults.ssl = true;
 }
 
-var client = new pg.Pool(config);
+var client = new pg.Client(config);
 client.connect();
 //products page
 app.get('/productss/categories', function(req, res) {
@@ -307,60 +311,33 @@ app.delete('/deleteaccount',function(req,res){
 
 
 app.post('/wishlists', function(req, res) {
-              const text = 'INSERT INTO salesforce.OpportunityLineItem (opportunityProductExternalId__c,Description,Product2Id,UnitPrice,name,quantity,OpportunityId) VALUES($1,$2,$3,$4,$5,$6,(select sfid from salesforce.opportunity where opportunityExternalId__c=$7)) RETURNING *'
-              const values=[req.body.opportunityProductExternalId__c,req.body.Description,req.body.Product2Id,req.body.UnitPrice,req.body.name,req.body.Quantity,req.decodedToken.cin]
+              const text = 'INSERT INTO salesforce.OpportunityLineItem (Description,Product2Id,UnitPrice,name,quantity,OpportunityId) VALUES($1,$2,$3,$4,$5,(select sfid from salesforce.opportunity where opportunityExternalId__c=$6)) RETURNING *'
+              const values=[req.body.Description,req.body.Product2Id,req.body.UnitPrice,req.body.name+" "+req.decodedToken.name,req.body.Quantity,req.decodedToken.cin]
               client.query(text,values,function(error,data){
                 if(error){
                   console.log("error",error)
                 }
                 else{
-                 //res.json({msg:'added to cart'})
-                
-                 
-                 const text1 = "INSERT INTO salesforce.Opportunity (name,closedate,Pricebook2Id,accountid,StageName,opportunityExternalId__c) VALUES($1,'2022-12-31','01s8d000003IM8RAAW',(select sfid from salesforce.Account where accountExternalId__c=$2),'Prospecting',$3) RETURNING *"
-                 const cin=Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()
-                 const values1=["Opportunity (single) for "+req.decodedToken.name,req.decodedToken.cin,cin]
-                 client.query(text1,values1,function(error,data){
-                if(error){
-                  console.log("error",error)
-                }
-                else{
-
-                      console.log(data.rows)
-                      res.json(data.rows)
-                    }
-
-                  })
-                  
+                 res.json({msg:'added to cart'}) 
                 }
               })
       
                 
               });
 
-app.post('/wishliststolineitem', function(req, res) {
-                const text5 = "INSERT INTO salesforce.OpportunityLineItem (opportunityProductExternalId__c,Description,Product2Id,UnitPrice,name,quantity,OpportunityId) VALUES($1,$2,$3,$4,$5,$6,(select sfid from salesforce.opportunity where name like '%(single)%' order by createddate desc limit 1 )) RETURNING *"
-                const values5=[req.body.opportunityProductExternalId__c,req.body.Description,req.body.Product2Id,req.body.UnitPrice,req.body.name,req.body.Quantity]
-                console.log('oprpofkrfr',req.body.opportunityexternalid__c)
-                client.query(text5,values5,function(error,data){
-                  if(error){
-                    console.log("error",error)
-                  }
-                  else{
-                    res.json(data.rows)
-                    }   
-                    })
-                    })  ;
+
 app.get('/wishlists', function(req, res) {
         //and op.OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1)
-        const text="select p.name,p.duration__c,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p where p.sfid=op.Product2Id and op.OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1) "
+        //const text="select p.name,p.duration__c,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p where p.sfid=op.Product2Id and op.OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1) "
+        const text="select description from salesforce.opportunitylineitem where OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1)"
         const values=[req.decodedToken.cin]
-        console.log('cinnnn',values)
+        console.log(values)
         client.query(text,values,function(error,data){
           if(error){
             console.log("error",error)
           }
           else{
+           
            res.json(data.rows)
 
           }
@@ -371,13 +348,14 @@ app.get('/wishlists', function(req, res) {
 
 app.get('/wishlistssingles', function(req, res) {
   //const text="select p.name,p.duration__c,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p where p.sfid=op.Product2Id and op.OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1) "
-  const text="select p.name,p.duration__c,op.sfid,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p,salesforce.opportunity as o where p.sfid=op.Product2Id  and o.sfid=op.OpportunityId and o.name like '%(single)%'"
-  //const values=[req.decodedToken.cin]
-  client.query(text,function(error,data){
+  const text="select p.name,p.duration__c,op.sfid,op.opportunityId,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p,salesforce.opportunity as o where p.sfid=op.Product2Id  and o.sfid=op.OpportunityId and o.name like $1 "
+  const values=['%(pack) for'+' '+req.decodedToken.name+'%']
+  client.query(text,values,function(error,data){
     if(error){
       console.log("error",error)
     }
     else{
+     //console.log("wish",data.rows)
      res.json(data.rows)
 
     }
@@ -386,13 +364,180 @@ app.get('/wishlistssingles', function(req, res) {
 
 });
 
+app.delete('/wishlistitem', function(req, res) {
+    const  text="delete from salesforce.opportunityLineItem where sfid=$1 "
+    const values=[req.body.sfid]
+    //console.log("body",req.body)
+  client.query(text,values,function(error,data){
+    if(error){
+      console.log("error",error)
+    }
+    else{
+      res.json({msg:'service deleted'})
+
+    }
+  })
+  
+
+});
+
+app.delete('/allwishlistitem', function(req, res) {
+  const  text="delete from salesforce.opportunityLineItem where name like $1 "
+  const values=["%"+req.decodedToken.name+"%"]
+  //console.log("body",req.body)
+client.query(text,values,function(error,data){
+  if(error){
+    console.log("error",error)
+  }
+  else{
+    const text1="delete from salesforce.opportunity where sfid=$1"
+    const values1=[req.body.opportunityid]
+    client.query(text1,values1,function(error,data){
+      if(error){
+        console.log("error",error)
+      }
+      else{
+        console.log('service deleted',data.rows)
+        res.json({msg:'service deleted'})
+      }
+    })
+
+  }
+})
+
+
+});
+
+
+
+
+
+app.post('/insertopportunity', function(req, res) {
+    const text ="INSERT INTO salesforce.opportunity (opportunityExternalId__c,name,	AccountId,Pricebook2Id,StageName,CloseDate) VALUES($1,$2,(select sfid from salesforce.account where accountEXternalId__c=$3),'01s8d000003IM8RAAW','Negotiation/Review','2022-12-31') RETURNING *"
+    const values=[(req.decodedToken.cin+";"+req.body.oppExternalId__c).substring(0,18),"opprotunity  for "+req.decodedToken.name+" n°:"+req.body.name,req.decodedToken.cin]
+    client.query(text,values,function(error,data){
+      if(error){
+        console.log("error",error)
+      }
+      else{
+       res.json({msg:(req.decodedToken.cin+";"+req.body.oppExternalId__c).substring(0,18)}) 
+      }
+    })
+    });
+
+
+  app.get('/wishlistgetquotes', function(req, res) {
+    const text="select q.discount, q.quoteexternalid__c,q.createddate, qli.discount,qli.sfid as qliSfid, p.name,productCode ,qli.quantity,qli.unitPrice,p.duration__c,q.name as quoteName,q.sfid as quotesfid from salesforce.quotelineitem as qli  ,salesforce.product2 as p,salesforce.quote as q  where qli.quoteId=q.sfid and   p.sfid=qli.product2Id and qli.quoteId in (select sfid from salesforce.quote where accountId=(select sfid from salesforce.account where accountExternalId__c=$1))"
+    const values=[req.decodedToken.cin]
+    client.query(text,values,function(error,data){
+      console.log('deed')
+      if(error){
+        console.log("error",error)
+      }
+      
+      else{
+        console.log("quotes",data.rows)
+       res.json(data.rows)
+  
+      }
+    })
+  });
+  
+
+  app.post("/create-checkout-session", async (req, res) => {
+    console.log(req.body);
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "EUR",
+            product_data: {
+              name: "NAME OF PAYMENT FORM",
+              //req.body.Pname
+            },
+            unit_amount:4000,
+            //req.body.Tprice
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: "http://localhost:5000/account/StripePaymentSuccess",
+      cancel_url: "http://localhost:5000/stripepaymentcancel",
+    });
+  
+    res.json({ id: session.id });
+  });
+
+  app.put('/sendemail',function(req,res){
+    text="update  salesforce.quote set sendemail__c=true where sfid=$1 "
+    values=[req.body.sfid]
+    console.log("email",values)
+    client.query(text,values,function(error,data){
+      if (error){
+        console.log("error: ",error)
+      }
+      else{
+      res.json({msg:'mail send'})
+      }
+    })
+    })
+    app.delete('/deletequote', function(req, res) {
+      const  text="delete from salesforce.quotelineItem where quoteId=(select sfid from salesforce.quote where quoteexternalId__c=$1) "
+      const values=[req.body.quoteExternalId]
+    client.query(text,values,function(error,data){
+      if(error){
+        console.log("error",error)
+      }
+      else{
+        //
+        const  text="delete from salesforce.quote where sfid=$1 "
+        const values=[req.body.sfid]
+        client.query(text,values,function(error,data){
+          if(error){
+            console.log("error",error)
+          }
+          else{
+            res.json({msg:'quote,quoteLi deleted'})
+
+
+              }
+            })
+
+          }
+        })
+      }
+    )
+    app.delete('/deleteopp',function(req,res){
+
+      const text="delete from salesforce.opportunityLineItem where opportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1)"
+      const values=[req.body.quoteExternalId]
+      console.log("qExId",values)
+      client.query(text,values,function(error,data){
+        if(error){
+          console.log("error",error)
+        }
+        else{
+          console.log("deleteopp",data.rows)
+          const text="delete from salesforce.opportunity where opportunityExternalId__c=$1"
+          const values=[req.body.quoteExternalId]
+          client.query(text,values,function(error,data){
+            if(error){
+              console.log("error",error)
+            }
+            else{
+              console.log("delete opp",data.rows)
+              res.json({msg:'opp,oppli deleted'})
+            }
+    })
+  }
+})
+ })
+
 if (env==='production'){
   app.get("*", function (request, response) {
   response.sendFile(path.resolve(__dirname, "./front/build", "index.html"));
 });
  
 }
-/**
- *         const text="select p.name,p.duration__c,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p,salesforce.opportunity as o where p.sfid=op.Product2Id  and o.sfid=op.OpportunityId and o.name like '%(single)%'"
-
- */

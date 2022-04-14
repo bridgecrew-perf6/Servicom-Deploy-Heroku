@@ -117,6 +117,7 @@
     "simple-assign": "^0.1.0",
     "split2": "^4.1.0",
     "statuses": "^1.5.0",
+    "stripe": "^8.216.0",
     "supports-color": "^5.5.0",
     "symbol-observable": "^1.2.0",
     "toidentifier": "^1.0.1",
