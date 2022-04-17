@@ -31,10 +31,9 @@ const useStyles = makeStyles(theme => ({
 
 const ShoppingCart = props => {
   const { className, ...rest } = props;
-  const [data,setData]=React.useState([])
   const[quotes,setQuotes]=React.useState([])
-  const [quotelineitems,setQuotelineitems]=React.useState([])
-  const [refresh,setRefresh]=React.useState(true)
+  const [refresh,setRefresh]=React.useState(false)
+  const [waiting ,setWaiting]=React.useState('x')
   const months=['Jun','Feb','Mar','Apr','May','June','July','Aug','Sep','Oct','Nov','Dec']
   
   React.useEffect(() => {
@@ -45,47 +44,51 @@ const ShoppingCart = props => {
       }
     };
     const url =process.env.REACT_APP_DOMAIN+'/wishlistgetquotes';
-    
-    axios.get(url,config)
-    .then(reslt=>{
-      setQuotelineitems(reslt.data)
-       let quotesInter=[
+        axios.get(url,config)
+        .then(reslt=>{
+          
+           let quotesInter=[
+           
+           ]
+           let Ids=[]
+           for (let i=0;i<reslt.data.length;i++){
+             if(Ids.indexOf(reslt.data[i].quotesfid)===-1){
+              const dateAdded=reslt.data[i].createddate
+              const date=months[(new Date(dateAdded)).getMonth()]+"  " + (new Date(dateAdded)).getDate()+","+(new Date(dateAdded)).getFullYear()
+              quotesInter.push({
+                 sfid:reslt.data[i].quotesfid,
+                 name:reslt.data[i].quotename,
+                 createddate:date,
+                 grandtotal:reslt.data[i].grandtotal,
+                 quoteExternalId:reslt.data[i].quoteexternalid__c,
+                 qli:[],
+                 discount:reslt.data[i].discount
+                })
+                Ids.push(reslt.data[i].quotesfid)
+             }
+           }
+           for (let i=0;i<reslt.data.length;i++){
+             for(let j=0;j<Ids.length;j++){
+              if(reslt.data[i].quotesfid===quotesInter[j].sfid){
+                quotesInter[j].qli.push(reslt.data[i])
+              }
+             }
+           }
+           setQuotes(quotesInter)
+          
+           
+        })
+        .catch(err=>{
+          console.log("errr",err)
+         
+          
+        
+        })
        
-       ]
-       let Ids=[]
-       for (let i=0;i<reslt.data.length;i++){
-         if(Ids.indexOf(reslt.data[i].quotesfid)===-1){
-          const dateAdded=reslt.data[i].createddate
-          const date=months[(new Date(dateAdded)).getMonth()]+"  " + (new Date(dateAdded)).getDate()+","+(new Date(dateAdded)).getFullYear()
-          quotesInter.push({
-             sfid:reslt.data[i].quotesfid,
-             name:reslt.data[i].quotename,
-             createddate:date,
-             quoteExternalId:reslt.data[i].quoteexternalid__c,
-             qli:[],
-             discount:reslt.data[i].discount
-            })
-            Ids.push(reslt.data[i].quotesfid)
-         }
-       }
-       for (let i=0;i<reslt.data.length;i++){
-         for(let j=0;j<Ids.length;j++){
-          if(reslt.data[i].quotesfid===quotesInter[j].sfid){
-            quotesInter[j].qli.push(reslt.data[i])
-          }
-         }
-       }
-       setQuotes(quotesInter)
-    })
-    .catch(err=>{
-      console.log("errr",err)
-     
-      
-    
-    })
-  
+   
   
   },[refresh]);
+ 
   const classes = useStyles();
 
   const theme = useTheme();
@@ -95,6 +98,7 @@ const ShoppingCart = props => {
   
   
   const deleteItem =(sfid,quoteExternalId)=>{
+    
     const url =process.env.REACT_APP_DOMAIN+'/deletequote';
     axios.delete(url,{
       headers: {
@@ -123,7 +127,7 @@ const ShoppingCart = props => {
     }
       )
       .then(resl=>{
-        setRefresh(!refresh)
+        setRefresh(true)
         console.log("delete",resl.data)
       })
       
@@ -134,24 +138,27 @@ const ShoppingCart = props => {
     
     })
     
+    
   }
 
-  const handleClick = async () => {
+  const handleClick = async (totalPrice,quoteSfid) => {
     // Get Stripe.js instance
+    localStorage.setItem('quoteSfid',quoteSfid)
     const stripe = await stripePromise;
-    const totalprice = 0;
-    //const body = { Pname, tp };
+   
+    const body = {totalPrice:totalPrice};
     const response = await fetch(
       process.env.REACT_APP_DOMAIN + '/create-checkout-session',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: localStorage.getItem('jwt') },
-        //body: JSON.stringify(body),
+        body: JSON.stringify(body),
       },
     );
-    //console.log(body);
+  
     const session = await response.json();
     console.log('sessionnnnnn');
+    console.log('tottttt',totalPrice)
     console.log(session);
     // When the customer clicks on the button, redirect them to Checkout.
     const result = await stripe.redirectToCheckout({
@@ -159,18 +166,18 @@ const ShoppingCart = props => {
     });
 
     if (result.error) {
-      console.log('mamchetchi');
       console.log(result.error.message);
-      // If `redirectToCheckout` fails due to a browser or network
-      // error, display the localized error message to your customer
-      // using `result.error.message`.
+    
     }
   };
 
   const sendEmail =(sfid)=>{
     console.log("sdszdzzddz",sfid)
+    setWaiting(sfid)
     const form={
-      sfid:sfid
+      sfid:sfid,
+      emailValue:((Math.random()*Math.random()*Math.random())+1).toString(),
+
     }
     const config = {
       headers:{
@@ -184,6 +191,9 @@ const ShoppingCart = props => {
       //localStorage.removeItem('jwt')
       //localStorage.setItem('jwt',reslt.data.token)
       console.log("resslt",reslt.data)
+      setTimeout(()=>{
+        setWaiting('x')
+      },2000)
       
     })
     .catch(err=>
@@ -195,7 +205,6 @@ const ShoppingCart = props => {
 
   return (
     <div className={className} {...rest}>
-       {console.log("oiokoikzsoi",quotes)}
       <SectionHeader
         title={
           <span>
@@ -250,7 +259,7 @@ const ShoppingCart = props => {
                   variant="contained"
                   color="primary"
                   size={isMd ? 'large' : 'medium'}
-                  onClick={handleClick}
+                  onClick={()=>handleClick(item.grandtotal,item.sfid)}
                 >
                 Buy Now!
                 </Button>
@@ -263,7 +272,20 @@ const ShoppingCart = props => {
                  <EmailIcon/>
                 </Button>
             </Grid>
-           
+            {waiting===item.sfid &&
+          <Grid item xs={12}>
+            <Button
+            size="large"
+            variant="contained"
+            type="submit"
+            style={{backgroundColor:'green',marginTop:'10px',color:'white',fontWeight:900}}
+            fullWidth
+          >
+            sending email ..please check your inbox
+          </Button>
+          </Grid>
+          }
+            
             {
             index <quotes.length-1 &&
             <Grid item xs={12} m={2}>
@@ -274,9 +296,7 @@ const ShoppingCart = props => {
        
         ))}
         </Grid>
-        
-        
-       
+      
     </div>
   );
 };

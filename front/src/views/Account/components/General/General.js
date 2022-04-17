@@ -139,8 +139,7 @@ const General = props => {
       const url =process.env.REACT_APP_DOMAIN+'/userInfos';
       axios.put(url,form,config)
       .then(reslt=>{
-        //localStorage.removeItem('jwt')
-        //localStorage.setItem('jwt',reslt.data.token)
+        
           window.location.replace('/account/?pid=infos');
         
       })

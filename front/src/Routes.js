@@ -5,6 +5,7 @@
  */
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
+import { ShoppingCart } from 'views/Account/components';
 import WithLayout from 'WithLayout';
 import { Main as MainLayout} from './layouts';
 
@@ -121,6 +122,20 @@ const Routes = () => {
          <WithLayout
            {...matchProps}
            component={Account}
+           layout={MainLayout}
+         />
+       )}
+     /> 
+     }
+     {
+       localStorage.getItem('jwt')&&
+       <Route
+       exact
+       path="/account/shoppingcart"
+       render={matchProps => (
+         <WithLayout
+           {...matchProps}
+           component={ShoppingCart}
            layout={MainLayout}
          />
        )}

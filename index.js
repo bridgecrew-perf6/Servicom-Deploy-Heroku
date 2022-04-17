@@ -427,10 +427,10 @@ app.post('/insertopportunity', function(req, res) {
 
 
   app.get('/wishlistgetquotes', function(req, res) {
-    const text="select q.discount, q.quoteexternalid__c,q.createddate, qli.discount,qli.sfid as qliSfid, p.name,productCode ,qli.quantity,qli.unitPrice,p.duration__c,q.name as quoteName,q.sfid as quotesfid from salesforce.quotelineitem as qli  ,salesforce.product2 as p,salesforce.quote as q  where qli.quoteId=q.sfid and   p.sfid=qli.product2Id and qli.quoteId in (select sfid from salesforce.quote where accountId=(select sfid from salesforce.account where accountExternalId__c=$1))"
+    const text="select q.discount,q.grandtotal,q.quoteexternalid__c,q.createddate, qli.discount,qli.sfid as qliSfid, p.name,productCode ,qli.quantity,qli.unitPrice,p.duration__c,q.name as quoteName,q.sfid as quotesfid from salesforce.quotelineitem as qli  ,salesforce.product2 as p,salesforce.quote as q  where qli.quoteId=q.sfid and q.status='Draft' and   p.sfid=qli.product2Id and qli.quoteId in (select sfid from salesforce.quote where accountId=(select sfid from salesforce.account where accountExternalId__c=$1))"
     const values=[req.decodedToken.cin]
     client.query(text,values,function(error,data){
-      console.log('deed')
+      //console.log('deed')
       if(error){
         console.log("error",error)
       }
@@ -445,7 +445,6 @@ app.post('/insertopportunity', function(req, res) {
   
 
   app.post("/create-checkout-session", async (req, res) => {
-    console.log(req.body);
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [
@@ -453,32 +452,30 @@ app.post('/insertopportunity', function(req, res) {
           price_data: {
             currency: "EUR",
             product_data: {
-              name: "NAME OF PAYMENT FORM",
-              //req.body.Pname
+              name: "Hello :"+req.decodedToken.name+" The Total price is :",
             },
-            unit_amount:4000,
-            //req.body.Tprice
+            unit_amount:req.body.totalPrice,
           },
           quantity: 1,
         },
       ],
       mode: "payment",
-      success_url: "http://localhost:5000/account/StripePaymentSuccess",
-      cancel_url: "http://localhost:5000/stripepaymentcancel",
+      success_url:  process.env.DOMAIN+"/account/?pid=contracts",
+      cancel_url:  process.env.DOMAIN+"/?pid=stripepaymentcancel",
     });
-  
     res.json({ id: session.id });
   });
 
   app.put('/sendemail',function(req,res){
-    text="update  salesforce.quote set sendemail__c=true where sfid=$1 "
-    values=[req.body.sfid]
+    text="update  salesforce.quote set sendemail__c=$2 where sfid=$1 "
+    values=[req.body.sfid,req.body.emailValue]
     console.log("email",values)
     client.query(text,values,function(error,data){
       if (error){
         console.log("error: ",error)
       }
       else{
+      console.log('aliii',data.rows)
       res.json({msg:'mail send'})
       }
     })
@@ -534,6 +531,89 @@ app.post('/insertopportunity', function(req, res) {
   }
 })
  })
+
+ app.post('/insertcontract', function(req, res) {
+  const text ="INSERT INTO salesforce.contract (accountId,status,StartDate,ContractTerm,contractExternalId__c,sendEmail__c) VALUES((select sfid from salesforce.account where accountEXternalId__c=$1),'Draft','2022-12-31',12,$2,'0') RETURNING *"
+  const values=[req.decodedToken.cin,req.body.contExternalId__c]
+  client.query(text,values,function(error,data){
+    if(error){
+      console.log("error",error)
+    }
+    else{
+     const text="update salesforce.opportunity set  stageName='Closed Won' where opportunityExternalId__c=(select quoteExternalId__c from salesforce.quote where sfid=$1)"
+     const values=[req.body.contExternalId__c.substring(0,req.body.contExternalId__c.indexOf(';'))]
+    client.query(text,values,function(error,data){
+      if(error){
+        console.log("error",error)
+      }
+     
+          else{
+            console.log("contract",data.rows)
+            res.json({msg:'contract added'})
+          }
+    })
+    }
+  })
+  });
+
+app.get('/draftcontracts',function(req,res){
+  const text="select c.sfid as contractsfid,c.status, c.ContractTerm,c.StartDate,c.EndDate,q.sfid as quotesfid, q.grandTotal, p.name,p.duration__c from salesforce.contract as c,salesforce.quote as q  ,salesforce.quotelineitem as qli ,salesforce.product2 as p where c.status='Draft' and qli.quoteId=q.sfid and  p.sfid=qli.product2Id and q.contractId=c.sfid "
+  client.query(text,function(error,data){
+ 
+    if (error){
+      console.log(error)
+    }
+    else{
+      console.log(data.rows)
+      res.json(data.rows)
+    }
+  })
+  
+})
+
+app.get('/activatedcontracts',function(req,res){
+  const text="select c.sfid as contractsfid,c.status, c.ContractTerm,c.StartDate,c.EndDate,q.sfid as quotesfid, q.grandTotal, p.name,p.duration__c from salesforce.contract as c,salesforce.quote as q  ,salesforce.quotelineitem as qli ,salesforce.product2 as p where c.status='Activated' and qli.quoteId=q.sfid and  p.sfid=qli.product2Id and q.contractId=c.sfid "
+  client.query(text,function(error,data){
+ 
+    if (error){
+      console.log(error)
+    }
+    else{
+      //console.log(data.rows)
+      res.json(data.rows)
+    }
+  })
+  
+})
+
+app.put('/sendemailContract',function(req,res){
+  text="update  salesforce.contract set sendemail__c=$1 where sfid=$2 "
+  values=[req.body.emailValue,req.body.sfid]
+  console.log("email",values)
+  client.query(text,values,function(error,data){
+    if (error){
+      console.log("error: ",error)
+    }
+    else{
+    console.log('aliii',data.rows)
+    res.json({msg:'mail send'})
+    }
+  })
+  })
+app.put('/activateContract',function(req,res){
+    const text="update  salesforce.contract set status='Activated',sendEmail__c='0',StartDate=$2,contractterm=$3 where sfid=$1 "
+    const values=[req.body.sfid,req.body.startdate,req.body.contractterm]
+    console.log("email",values)
+    client.query(text,values,function(error,data){
+      if (error){
+        console.log("error: ",error)
+      }
+      else{
+      console.log('aliii',data.rows)
+      res.json({msg:'mail send'})
+      }
+    })
+    })
 
 if (env==='production'){
   app.get("*", function (request, response) {

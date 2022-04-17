@@ -15,7 +15,7 @@ import {
 import Avatar from '@material-ui/core/Avatar';
 import { Image } from 'components/atoms';
 import { CardProduct, SectionAlternate } from 'components/organisms';
-import CreditCardIcon from '@material-ui/icons/CreditCard';
+//import CreditCardIcon from '@material-ui/icons/CreditCard';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 const useStyles = makeStyles(theme => ({
@@ -295,19 +295,17 @@ useEffect(() => {
                   <Box>
                      {
                        sfids.indexOf(props.sfid )!==-1 ?
-                       (<Button color={'secondary'}>
+                       (<Button color={'primary'}>
                          <FavoriteIcon/>
                        </Button>)
                        :
                        (
-                        <Button color={'secondary'} onClick={()=>wishListHandler(props.product2id,props.price,props.numberOfUsers__c,props.title,props.picture_url__c,props.sfid)}>
+                        <Button color={'primary'} onClick={()=>wishListHandler(props.product2id,props.price,props.numberOfUsers__c,props.title,props.picture_url__c,props.sfid)}>
                         <FavoriteBorderIcon/>
                         </Button>
                        )
                      }
-                        <Button color="primary">
-                          <CreditCardIcon/>
-                        </Button>
+                        
                         <Button onClick={()=>localStorage.setItem("family",props.family)}>
                        <Link to={'/products/product/'+props.sfid}>
                        <ArrowRightAltIcon

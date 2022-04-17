@@ -28,6 +28,7 @@ const Wishlist = props => {
   const { className, ...rest } = props;
   const [data,setData]=React.useState([])
   const [refresh,setRefresh]=React.useState(true)
+  const [waiting,setWaiting]=React.useState(false)
 
   React.useEffect(() => {
     const config = {
@@ -92,7 +93,11 @@ const Wishlist = props => {
     const oppurl =process.env.REACT_APP_DOMAIN+'/insertopportunity';
     axios.post(oppurl,oppform,config)
     .then(reslt=>{
-      console.log(reslt.data)
+      setWaiting(true)
+      setTimeout(()=>{
+       setWaiting(false)
+      
+      },3000)
     })
     .catch(err=>{
       console.log("errr",err)
@@ -210,7 +215,19 @@ const Wishlist = props => {
                   {isMd ? 'delete all services':'delete all '}
                 </Button>
         </Grid>
-
+        {waiting &&
+          <Grid item xs={12}>
+            <Button
+            size="large"
+            variant="contained"
+            type="submit"
+            style={{backgroundColor:'green',marginTop:'10px',color:'white',fontWeight:900}}
+            fullWidth
+          >
+            adding quote ....., please waite for  a moment :)
+          </Button>
+          </Grid>
+          }
        
     </div>
   );
