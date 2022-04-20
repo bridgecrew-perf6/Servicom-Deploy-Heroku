@@ -186,7 +186,7 @@ const maxContractTerm=(info)=>{
             </Grid>
               }
               {
-              info.enddate &&
+              true &&
               <Grid item  xs={12}>
               <Box display={'flex'} justifyContent={'flex-start'} flexWrap={'wrap'} style={{marginTop:20,marginBottom:15}}>
               <Typography
@@ -236,10 +236,10 @@ export default function Contracts() {
   const [draftcontracts,setDraftcontracts]=React.useState([])
   const[activatedcontracts,setActivatedcontracts]=React.useState([])
   const [waiting ,setWaiting]=React.useState('x')
-  const [refresh,setRefresh]=React.useState(false)
 
   React.useEffect(() => {
     if(localStorage.getItem('quoteSfid')){
+
       const form={
         contExternalId__c:localStorage.getItem('quoteSfid')+";"+(Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*100000).toString() ,
   
@@ -255,6 +255,9 @@ export default function Contracts() {
       .then(reslt=>{
         console.log(reslt.data)
         localStorage.removeItem("quoteSfid")
+        setTimeout(()=>{
+          window.location.reload()  
+        },4000)
 
        
       })
@@ -346,7 +349,7 @@ export default function Contracts() {
     
     })
   
-  },[refresh]);
+  },[]);
  const sendByEmail =(sfid)=>{
   
   
@@ -396,8 +399,7 @@ export default function Contracts() {
   axios.put(url,form,config)
   .then(reslt=>{
     console.log("resslt",reslt.data)
-    setRefresh(!refresh)
-    
+    window.location.reload()    
     
   })
   .catch(err=>
@@ -406,7 +408,7 @@ export default function Contracts() {
  }
 
   return (
-    <Grid container justifyContent='center'>
+    <Grid container justifyContent='center' alignItems='center'>
      {
        draftcontracts.length>0 &&
        <Typography color='secondary'  component="p" variant="h4"  style={{ marginLeft:'10px'}}>
@@ -418,13 +420,25 @@ export default function Contracts() {
         <DraftContracts info={draftcontract} sendByEmail={sendByEmail} waiting={waiting} activateNow={activateNow}  index={index} key={index} />
       ))
     }
-     <Typography color='secondary'  component="p" variant="h4"  style={{ marginTop:'40px', marginLeft:'10px'}}>
+    {
+      activatedcontracts.length>0 &&
+      <Typography color='secondary'  component="p" variant="h4"  style={{ marginTop:'40px', marginLeft:'10px'}}>
       Activated Contracts 
       </Typography>
+    }
       {
       activatedcontracts.map((activatedcontract,index)=>(
         <DraftContracts info={activatedcontract} waiting={waiting} sendByEmail={sendByEmail} index={index} key={index} />
       ))
+    }
+    {
+      activatedcontracts.length===0 && draftcontracts.length===0 &&
+     
+      <Typography color='secondary'  component="p" variant="h4"  style={{ marginTop:'40px', marginLeft:'10px'}}>
+      No contracts yet  
+      </Typography>
+      
+
     }
     </Grid>
 

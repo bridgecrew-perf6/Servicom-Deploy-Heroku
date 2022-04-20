@@ -124,7 +124,6 @@ app.get('/productss/:category', function(req, res) {
 app.get('/productss/product/:sfid',function(req,res){
   const text="select pbe.sfid as pbesfid, pbe.createdbyid,pbe.createddate,pbe.unitprice ,pbe.product2Id ,p.numberOfSubcribers__c,p.family,p.Picture_URL__c, p.name,p.marketingQuote__c,p.otherimageslinks__c,p.subtitle__c,p.sfid,p.duration__c,p.numberOfUsers__c,p.sales_figure__c,p.provider__c,p.siteurl__c,p.tags__c,p.description ,u.mediumphotourl , u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where pbe.sfid=$1 and  p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid"
   const values=[req.params.sfid]
-  console.log("first",req.params.sfid)
   client.query(text,values,function(error,data){
     if(error){
       console.log("error",error)
@@ -149,7 +148,20 @@ app.get('/smilarproduct/:fam/:sfid',function(req,res){
     }
   })
 })
-
+app.get('/reviews/:sfid',function(req,res){
+  const text="select pr.sfid as prSfid,pr.createddate, pr.review__c,pr.dislikes__c,pr.likes__c ,comm.name,comm.profilephoto__c  from salesforce.pricebookentry as pbe, salesforce.product_review__c as pr ,salesforce.commercialexternalInfos__c as comm where  pbe.sfid=$1 and pr.commercialExternalInfo__c=comm.sfid and pr.product__c=pbe.product2Id "
+  const values=[req.params.sfid]
+  console.log("firstsdfghjk",req.params.sfid)
+  client.query(text,values,function(error,data){
+    if(error){
+      console.log("error",error)
+    }
+    else{
+      res.json(data.rows)
+      console.log(data.rowCount)
+    }
+  })
+})
 app.post('/signups', function(req, res) {
   text='select name from salesforce.commercialExternalInfos__c where cin__c=$1 or email__c=$2'
   values=[req.body.cin,req.body.email]
@@ -557,8 +569,9 @@ app.post('/insertopportunity', function(req, res) {
   });
 
 app.get('/draftcontracts',function(req,res){
-  const text="select c.sfid as contractsfid,c.status, c.ContractTerm,c.StartDate,c.EndDate,q.sfid as quotesfid, q.grandTotal, p.name,p.duration__c from salesforce.contract as c,salesforce.quote as q  ,salesforce.quotelineitem as qli ,salesforce.product2 as p where c.status='Draft' and qli.quoteId=q.sfid and  p.sfid=qli.product2Id and q.contractId=c.sfid "
-  client.query(text,function(error,data){
+  const text="select c.sfid as contractsfid,c.status, c.ContractTerm,c.StartDate,c.EndDate,q.sfid as quotesfid, q.grandTotal, p.name,p.duration__c from salesforce.contract as c,salesforce.quote as q  ,salesforce.quotelineitem as qli ,salesforce.product2 as p where c.status='Draft' and qli.quoteId=q.sfid and  p.sfid=qli.product2Id and q.contractId=c.sfid and c.accountId=(select sfid from salesforce.account where accountexternalId__c=$1) "
+  const values=[req.decodedToken.cin]
+  client.query(text,values,function(error,data){
  
     if (error){
       console.log(error)
@@ -572,8 +585,10 @@ app.get('/draftcontracts',function(req,res){
 })
 
 app.get('/activatedcontracts',function(req,res){
-  const text="select c.sfid as contractsfid,c.status, c.ContractTerm,c.StartDate,c.EndDate,q.sfid as quotesfid, q.grandTotal, p.name,p.duration__c from salesforce.contract as c,salesforce.quote as q  ,salesforce.quotelineitem as qli ,salesforce.product2 as p where c.status='Activated' and qli.quoteId=q.sfid and  p.sfid=qli.product2Id and q.contractId=c.sfid "
-  client.query(text,function(error,data){
+  
+  const text="select c.accountId ,c.sfid as contractsfid,c.status, c.ContractTerm,c.StartDate,c.EndDate,q.sfid as quotesfid, q.grandTotal, p.name,p.duration__c from salesforce.contract as c,salesforce.quote as q  ,salesforce.quotelineitem as qli ,salesforce.product2 as p where c.status='Activated' and qli.quoteId=q.sfid and  p.sfid=qli.product2Id  and q.contractId=c.sfid and c.accountId=(select sfid from salesforce.account where accountexternalId__c=$1)"
+  const values=[req.decodedToken.cin]
+  client.query(text,values,function(error,data){
  
     if (error){
       console.log(error)
@@ -601,7 +616,7 @@ app.put('/sendemailContract',function(req,res){
   })
   })
 app.put('/activateContract',function(req,res){
-    const text="update  salesforce.contract set status='Activated',sendEmail__c='0',StartDate=$2,contractterm=$3 where sfid=$1 "
+    const text="update  salesforce.contract set status='Activated',sendEmail__c='0',StartDate=$2,contractterm=$3 where sfid=$1"
     const values=[req.body.sfid,req.body.startdate,req.body.contractterm]
     console.log("email",values)
     client.query(text,values,function(error,data){
@@ -609,12 +624,27 @@ app.put('/activateContract',function(req,res){
         console.log("error: ",error)
       }
       else{
-      console.log('aliii',data.rows)
+      //console.log('aliii',data.rows)
       res.json({msg:'mail send'})
       }
     })
     })
 
+
+app.post('/insertreview',function(req,res){
+  const text='insert into salesforce.product_review__c (reviewExternalId__c,review__c,commercialExternalInfo__c,Product__c,dislikes__c,likes__c) values ($1,$2,(select sfid from salesforce.commercialExternalInfos__c where cin__c=$4),(select product2Id from salesforce.pricebookentry where sfid=$3),0,0) RETURNING *'
+  const values=[req.body.reviewExternalId__c,req.body.review,req.body.pbesfid,req.decodedToken.cin]
+  console.log('sfiidddd',req.body.pbesfid)
+  client.query(text,values,function(error,data){if (error){
+    console.log("error: ",error)
+  }
+  else{
+  console.log('aliii',data.rows)
+  res.json({msg:'mail send'})
+  }
+
+  })
+})
 if (env==='production'){
   app.get("*", function (request, response) {
   response.sendFile(path.resolve(__dirname, "./front/build", "index.html"));

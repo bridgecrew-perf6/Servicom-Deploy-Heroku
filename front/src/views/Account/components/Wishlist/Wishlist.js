@@ -96,8 +96,10 @@ const Wishlist = props => {
       setWaiting(true)
       setTimeout(()=>{
        setWaiting(false)
+       localStorage.setItem('reloadShoppingCart','true')
+      window.location.replace("/account/?pid=shoppingcart")
       
-      },3000)
+      },4000)
     })
     .catch(err=>{
       console.log("errr",err)

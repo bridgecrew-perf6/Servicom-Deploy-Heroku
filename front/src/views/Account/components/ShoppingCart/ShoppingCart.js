@@ -37,6 +37,13 @@ const ShoppingCart = props => {
   const months=['Jun','Feb','Mar','Apr','May','June','July','Aug','Sep','Oct','Nov','Dec']
   
   React.useEffect(() => {
+    if(localStorage.getItem('reloadShoppingCart')){
+      setTimeout(()=>{
+        localStorage.removeItem('reloadShoppingCart')
+        window.location.reload()
+
+      },4000)
+    }
     const config = {
       headers:{
         authorization:localStorage.getItem('jwt')
@@ -127,7 +134,7 @@ const ShoppingCart = props => {
     }
       )
       .then(resl=>{
-        setRefresh(true)
+        setRefresh(!refresh)
         console.log("delete",resl.data)
       })
       
@@ -216,6 +223,8 @@ const ShoppingCart = props => {
         fadeUp
       /> 
       {console.log('quId',quotes)}
+      {
+        quotes.length>0 &&
       <Grid container justifyContent="center">
 
         {quotes.map((item, index) => (
@@ -272,6 +281,7 @@ const ShoppingCart = props => {
                  <EmailIcon/>
                 </Button>
             </Grid>
+        
             {waiting===item.sfid &&
           <Grid item xs={12}>
             <Button
@@ -296,7 +306,7 @@ const ShoppingCart = props => {
        
         ))}
         </Grid>
-      
+      }
     </div>
   );
 };

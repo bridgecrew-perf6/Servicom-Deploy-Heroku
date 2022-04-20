@@ -11,7 +11,6 @@ import {
 import axios from 'axios';
 import PasswordField from 'material-ui-password-field'
 import validate from 'validate.js';
-import { set } from 'core-js/core/dict';
 const useStyles = makeStyles(theme => ({
   inputTitle: {
     fontWeight: 700,

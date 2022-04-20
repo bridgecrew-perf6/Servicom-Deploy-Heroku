@@ -8,6 +8,7 @@ import InstagramIcon from '@material-ui/icons/Instagram';
 import PinterestIcon from '@material-ui/icons/Pinterest';
 import { Image } from 'components/atoms';
 import {InfoCard} from './InfoCard'
+import Reviews from '../Reviews/Reviews';
 
 const useStyles = makeStyles(theme => ({
   section: {
@@ -96,6 +97,7 @@ const Content = props => {
           <PinterestIcon />
         </IconButton>
       </div>
+      <Reviews/>
       <InfoCard info={info} sfids={sfids} wishListHandler={wishListHandler} />
       <div className={classes.section}>
        {

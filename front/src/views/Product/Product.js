@@ -130,6 +130,7 @@ const Product = () => {
           <Grid item xs={12} md={10}>
             <Content info={info} data={content} wishListHandler={wishListHandler} sfids={sfids} />
           </Grid>
+          
         </Grid>
       </Section>
       <SectionAlternate>
