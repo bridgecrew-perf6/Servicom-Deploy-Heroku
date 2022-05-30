@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import ArrowRightAltIcon from '@material-ui/icons/ArrowRightAlt';
 import axios from 'axios';
+import './Result.css';
 import {Link} from 'react-router-dom'
 import {
   useMediaQuery,
@@ -239,6 +240,22 @@ useEffect(() => {
       lazyProps={{ width: '100%', height: '250px' }}
     />
   );
+  const cartButtons = document.querySelectorAll('.cart-button');
+
+  cartButtons.forEach(button => {
+    button.addEventListener('click', cartClick);
+    console.log(button);
+    console.log(cartButtons);
+    console.log("leeeeeeel");
+  });
+
+  function cartClick() {
+    console.log("ha chnouuuu");
+    let button = this;
+    console.log("ha chnouuuu");
+    button.classList.add('clicked');
+  }
+
   const wishListHandler= (product2id,price,numberOfUsers__c,title,picture_url__c,pbesfid)=>{
     const form={
       opportunityProductExternalId__c:Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random() ,
@@ -257,11 +274,13 @@ useEffect(() => {
     const url =process.env.REACT_APP_DOMAIN+'/wishlists';
     axios.post(url,form,config)
     .then(reslt=>{
+      console.log("data", form)
+      console.log(reslt);
         console.log("resl",reslt.data)
       setAddedtowishlist(!addedtowishlist)
     })
     .catch(err=>{
-      console.log("errr",err)
+      console.log("errrrr",err)
       
     
     })
@@ -280,7 +299,7 @@ useEffect(() => {
         textOverflow="ellipsis"
        >
       <Typography variant="body1" color="textSecondary" >
-        {props.subtitle.substring(0,120)}......
+        {props.subtitle}......
       </Typography>
       </Box>
       <div style={{ flexGrow: 1 }} />
@@ -292,19 +311,26 @@ useEffect(() => {
                   >
                     ${props.price}
                   </Typography>
+                  {/*  */}
                   <Box>
-                     {
-                       sfids.indexOf(props.sfid )!==-1 ?
-                       (<Button color={'primary'}>
-                         <FavoriteIcon/>
-                       </Button>)
-                       :
-                       (
-                        <Button color={'primary'} onClick={()=>wishListHandler(props.product2id,props.price,props.numberOfUsers__c,props.title,props.picture_url__c,props.sfid)}>
-                        <FavoriteBorderIcon/>
-                        </Button>
-                       )
-                     }
+                  {
+                    //   <button className="cart-button">
+                    //   <span className="add-to-cart">Add to cart</span>
+                    //   <span className="added">Added</span>
+                    //   <i className="fas fa-shopping-cart"></i>
+                    //   <i className="fas fa-box"></i>
+                    // </button>
+                      sfids.indexOf(props.sfid )!==-1 ?
+                      (<Button color={'primary'}>
+                        <FavoriteIcon/>
+                      </Button>)
+                      :
+                      (
+                       <Button color={'primary'} onClick={()=>wishListHandler(props.product2id,props.price,props.numberOfUsers__c,props.title,props.picture_url__c,props.sfid)}>
+                       <FavoriteBorderIcon/>
+                       </Button>
+                      )
+                    }
                         
                         <Button onClick={()=>localStorage.setItem("family",props.family)}>
                        <Link to={'/products/product/'+props.sfid}>
@@ -353,14 +379,17 @@ useEffect(() => {
           
               {tags.map((item, index) => (
                 <Box  m={{xs:0.5,md:1}}  key={index} onClick={()=>clickTagHandler("/"+item.family)} > 
-                <Typography
-                variant="body2"
-                color="primary"
-                className={"/"+item.family===category ?classes.tagClicked:classes.tag}
-               
-              >
-                {item.family}
-              </Typography>
+                {
+                  item.family !== null &&
+                  <Typography
+                  variant="body2"
+                  color="primary"
+                  className={"/"+item.family===category ?classes.tagClicked:classes.tag}
+                 
+                >
+                  {item.family}
+                </Typography>
+                }
               </Box>
               ))}
              </Box>

@@ -5,6 +5,8 @@ import { Divider, useMediaQuery } from '@material-ui/core';
 import { Grid, Button, Typography } from '@material-ui/core';
 import { SectionHeader } from 'components/molecules';
 import axios from 'axios';
+
+import './ShoppingCart.css'
 import TableQuote from './TableQuote';
 import { loadStripe } from '@stripe/stripe-js';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -204,13 +206,52 @@ const ShoppingCart = props => {
       
     })
     .catch(err=>
+
+
+      
       console.log("signup err",err))
-    
-     
+
+       
   }
   
 
   return (
+  //   <div >
+  //   <h1>List of selected services</h1>
+  //   <table className="table-box"> 
+  //     <thead> 
+  //       <tr className="flex">
+  //         <th > SERVICE NAME </th>
+  //         <th> UNIT PRICE </th> 
+  //         <th> QUANTITY </th> 
+  //       </tr>
+  //     </thead>
+  //     <tbody>
+  //     {
+  //     quotes.map((item) => (
+  //       <tr key={item.id}>
+  //         <td class="td1">{item.name}</td>
+  //         <td>{item.unitprice}</td>
+  //         <td>{item.quantity}</td>
+  //       </tr>
+  //       ))}
+  //     </tbody>
+  //   </table>
+  //   <div class="tp">TOTAL PRICE : 2999€</div>
+  //   <button class="button-36 " role="link" onClick={handleClick} >
+      
+  //     Proceed to Payment
+  //   </button>
+  //   <button class="button" role="link" >
+      
+  //     animate
+  //   </button>
+  // </div>
+
+  // LENNA TOUFA COMMANDE ALOOOOOOOOOO 
+
+
+
     <div className={className} {...rest}>
       <SectionHeader
         title={
@@ -308,6 +349,7 @@ const ShoppingCart = props => {
         </Grid>
       }
     </div>
+    
   );
 };
 

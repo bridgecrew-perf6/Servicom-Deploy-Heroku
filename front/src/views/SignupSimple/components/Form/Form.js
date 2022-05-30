@@ -196,7 +196,28 @@ const Form = () => {
             />
           </Grid>
           <Grid item xs={6}> 
-        <TextField
+
+
+          
+        {<Grid item xs={12}>
+            <TextField
+              placeholder="Company"
+              label="Company *"
+              variant="outlined"
+              size="medium"
+              name="company"
+              fullWidth
+              helperText={hasError('company') ? formState.errors.company[0] : null}
+              error={hasError('company')}
+              onChange={handleChange}
+              type="company"
+              value={formState.values.company || ''}
+            />
+          </Grid>
+        
+        
+        
+        /* <TextField
           
           select
           name='company'
@@ -213,7 +234,7 @@ const Form = () => {
               {console.log('partners',partners)}
             </MenuItem>
           ))}
-        </TextField>
+        </TextField> */}
           </Grid>
           <Grid item xs={6}>
             <TextField

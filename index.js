@@ -7,6 +7,7 @@ const cors =require('cors')
 const path =require('path');
 const bcrypt =require('bcryptjs');
 const generateToken=require('./generateToken');
+const { cp } = require('fs');
 const app = express();
 
 app.use(cors());
@@ -19,7 +20,7 @@ const stripe = require("stripe")(secretKey);
 
 env=process.env.NODE_ENV
 console.log(env)
-const PORT = process.env.PORT ||8080;
+const PORT = process.env.PORT ||5000;
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
   console.log('Press Ctrl+C to quit.');
@@ -62,9 +63,11 @@ app.get('/productss/categories', function(req, res) {
 app.get('/productss/partners', function(req, res) {
   client.query("select companyLogo__c,name,website from salesforce.account where companyLOgo__c<>'0' and Type='Technology Partner' ;", function(error, data) {
     if(error){
+      console.log("eeeeeeee")
       console.log("eee",error)
     }
     else{
+      console.log("data")
       console.log(data.rows)
       res.json(data.rows)
       
@@ -86,9 +89,9 @@ app.get('/partners', function(req, res) {
 app.get('/productss/:category', function(req, res) {
   console.log("category",req.params.category)
   
-    //const text="select createdbyid,CreatedDate ,unitprice,product2Id,(select name from salesforce.product2 where sfid=product2Id),(select family from salesforce.product2 where  sfid=product2Id),(select description from salesforce.product2 where sfid=product2Id),(select Picture_URL__c from salesforce.product2 where sfid=product2Id), (select name as username from salesforce.user where sfid=createdbyid),(select mediumphotourl from salesforce.user where sfid=createdbyid) from salesforce.pricebookentry where product2Id__r.family=$1 and  pricebook2Id='01s8d000003IM8RAAW'"
+    //const text="select createdbyid,CreatedDate ,unitprice,product2Id,(select name from salesforce.product2 where sfid=product2Id),(select family from salesforce.product2 where  sfid=product2Id),(select description from salesforce.product2 where sfid=product2Id),(select Picture_URL__c from salesforce.product2 where sfid=product2Id), (select name as username from salesforce.user where sfid=createdbyid),(select mediumphotourl from salesforce.user where sfid=createdbyid) from salesforce.pricebookentry where product2Id__r.family=$1 and  pricebook2Id='01s8d000002q4kWAAQ'"
    if(req.params.category==="all"){
-    const text="select pbe.sfid as pbesfid,pbe.Pricebook2__pricebookExternalId__c  , pbe.createdbyid,pbe.createddate,pbe.unitprice ,pbe.product2Id ,p.Picture_URL__c, p.name,p.numberOfUsers__c, p.sfid ,p.family,p.description ,u.mediumphotourl , u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid  and pbe.pricebook2Id='01s8d000003IM8RAAW'"
+    const text="select pbe.sfid as pbesfid,pbe.Pricebook2__pricebookExternalId__c  , pbe.createdbyid,pbe.createddate,pbe.unitprice ,pbe.product2Id ,p.Picture_URL__c, p.name,p.numberOfUsers__c, p.sfid ,p.family,p.description ,u.mediumphotourl , u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid  and pbe.pricebook2Id='01s8d000002q4kWAAQ'"
     //const values=[req.params.category]
     client.query(text,function(error, data) {
       if(error){
@@ -104,7 +107,7 @@ app.get('/productss/:category', function(req, res) {
     })
    }
    else{
-    const text="select pbe.sfid as pbesfid,pbe.Pricebook2__pricebookExternalId__c ,  pbe.createdbyid,pbe.createddate,pbe.unitprice ,pbe.product2Id ,p.Picture_URL__c, p.name , p.sfid ,p.family,p.description ,u.mediumphotourl , u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid and p.family=$1 and pbe.pricebook2Id='01s8d000003IM8RAAW'"
+    const text="select pbe.sfid as pbesfid,pbe.Pricebook2__pricebookExternalId__c ,  pbe.createdbyid,pbe.createddate,pbe.unitprice ,pbe.product2Id ,p.Picture_URL__c, p.name , p.sfid ,p.family,p.description ,u.mediumphotourl , u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid and p.family=$1 and pbe.pricebook2Id='01s8d000002q4kWAAQ'"
     const values=[req.params.category]
     client.query(text,values, function(error, data) {
       if(error){
@@ -136,7 +139,7 @@ app.get('/productss/product/:sfid',function(req,res){
 })
 
 app.get('/smilarproduct/:fam/:sfid',function(req,res){
-  const text="select pbe.createdbyid ,pbe.sfid as pbesfid ,pbe.createddate,pbe.product2Id,p.Picture_URL__c, p.name,p.subtitle__c,p.sfid,p.tags__c, u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where p.family=$1 and  p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid and pbe.pricebook2Id='01s8d000003IM8RAAW' and  pbe.sfid!=$2 Limit 3"
+  const text="select pbe.createdbyid ,pbe.sfid as pbesfid ,pbe.createddate,pbe.product2Id,p.Picture_URL__c, p.name,p.subtitle__c,p.sfid,p.tags__c, u.name as username from salesforce.pricebookentry as pbe , salesforce.product2  as p,salesforce.user as u where p.family=$1 and  p.sfid=pbe.product2Id and u.sfid=pbe.createdbyid and pbe.pricebook2Id='01s8d000002q4kWAAQ' and  pbe.sfid!=$2 Limit 3"
   const values=[req.params.fam,req.params.sfid]
   client.query(text,values,function(error,data){
     if(error){
@@ -325,6 +328,8 @@ app.delete('/deleteaccount',function(req,res){
 app.post('/wishlists', function(req, res) {
               const text = 'INSERT INTO salesforce.OpportunityLineItem (Description,Product2Id,UnitPrice,name,quantity,OpportunityId) VALUES($1,$2,$3,$4,$5,(select sfid from salesforce.opportunity where opportunityExternalId__c=$6)) RETURNING *'
               const values=[req.body.Description,req.body.Product2Id,req.body.UnitPrice,req.body.name+" "+req.decodedToken.name,req.body.Quantity,req.decodedToken.cin]
+              console.log("CIN HEY");
+              console.log(req.decodedToken.cin);
               client.query(text,values,function(error,data){
                 if(error){
                   console.log("error",error)
@@ -361,13 +366,14 @@ app.get('/wishlists', function(req, res) {
 app.get('/wishlistssingles', function(req, res) {
   //const text="select p.name,p.duration__c,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p where p.sfid=op.Product2Id and op.OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1) "
   const text="select p.name,p.duration__c,op.sfid,op.opportunityId,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p,salesforce.opportunity as o where p.sfid=op.Product2Id  and o.sfid=op.OpportunityId and o.name like $1 "
-  const values=['%(pack) for'+' '+req.decodedToken.name+'%']
+  const values=[req.decodedToken.name]
   client.query(text,values,function(error,data){
     if(error){
       console.log("error",error)
     }
     else{
-     //console.log("wish",data.rows)
+     console.log("wish",data.rows)
+      console.log(values)
      res.json(data.rows)
 
     }
@@ -424,18 +430,39 @@ client.query(text,values,function(error,data){
 
 
 
-app.post('/insertopportunity', function(req, res) {
-    const text ="INSERT INTO salesforce.opportunity (opportunityExternalId__c,name,	AccountId,Pricebook2Id,StageName,CloseDate) VALUES($1,$2,(select sfid from salesforce.account where accountEXternalId__c=$3),'01s8d000003IM8RAAW','Negotiation/Review','2022-12-31') RETURNING *"
-    const values=[(req.decodedToken.cin+";"+req.body.oppExternalId__c).substring(0,18),"opprotunity  for "+req.decodedToken.name+" n°:"+req.body.name,req.decodedToken.cin]
-    client.query(text,values,function(error,data){
-      if(error){
-        console.log("error",error)
-      }
-      else{
-       res.json({msg:(req.decodedToken.cin+";"+req.body.oppExternalId__c).substring(0,18)}) 
-      }
-    })
-    });
+// app.post('/insertopportunity', function(req, res) {
+//     const text ="INSERT INTO salesforce.opportunity (opportunityExternalId__c,name,	AccountId,Pricebook2Id,StageName,CloseDate) VALUES($1,$2,(select sfid from salesforce.account where accountEXternalId__c=$3),'01s8d000002q4kWAAQ','Negotiation/Review','2022-12-31') RETURNING *"
+//     const values=[(req.decodedToken.cin+";"+req.body.oppExternalId__c).substring(0,18),"opprotunity  for "+req.decodedToken.name+" n°:"+req.body.name,req.decodedToken.cin]
+//     client.query(text,values,function(error,data){
+//       if(error){
+//         console.log("error",error)
+//       }
+//       else{
+//        res.json({msg:(req.decodedToken.cin+";"+req.body.oppExternalId__c).substring(0,18)}) 
+//       }
+//     })
+//     });
+
+    // insert opportunity changed to update opportunity stage 
+
+
+    app.put('/insertopportunity',function(req,res){
+      text="update salesforce.opportunity set  stageName='Proposal/Price Quote'  where name like $1 "
+      values=["%"+req.decodedToken.name+"%"]
+      console.log("email",values)
+      client.query(text,values,function(error,data){
+        if (error){
+          console.log("error: ",error)
+        }
+        else{
+        console.log("QUOTE GENERATION INC ");
+        console.log(values)
+        }
+      })
+      })
+
+
+
 
 
   app.get('/wishlistgetquotes', function(req, res) {

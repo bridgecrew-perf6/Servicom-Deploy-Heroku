@@ -43,6 +43,8 @@ const Wishlist = props => {
     .then(reslt=>{
       
        setData(reslt.data)
+       console.log("data");
+       console.log(reslt.data);
     })
     .catch(err=>{
       console.log("errr",err)
@@ -78,34 +80,54 @@ const Wishlist = props => {
     
   }
 
-  const bookNow =()=>{
-    const oppform={
-      oppExternalId__c:(Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*100000).toString() ,
-      name:Math.random()*Math.random()*Math.random()*Math.random().toString(),
-      
+  const bookNow =(sfid)=>{
+    const form={
+    
     }
     const config = {
       headers:{
         authorization:localStorage.getItem('jwt')
-        
       }
     };
-    const oppurl =process.env.REACT_APP_DOMAIN+'/insertopportunity';
-    axios.post(oppurl,oppform,config)
+    const url =process.env.REACT_APP_DOMAIN+'/insertopportunity';
+    axios.put(url,form,config)
     .then(reslt=>{
-      setWaiting(true)
-      setTimeout(()=>{
-       setWaiting(false)
-       localStorage.setItem('reloadShoppingCart','true')
-      window.location.replace("/account/?pid=shoppingcart")
+        setRefresh(!refresh)
       
-      },4000)
     })
     .catch(err=>{
-      console.log("errr",err)
+      console.log(form);
+      console.log("ERROOOOR",err)
+    })
+
+
+    // const oppform={
+    //   oppExternalId__c:(Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*Math.random()*100000).toString() ,
+    //   name:Math.random()*Math.random()*Math.random()*Math.random().toString(),
+      
+    // }
+    // const config = {
+    //   headers:{
+    //     authorization:localStorage.getItem('jwt')
+        
+    //   }
+    // };
+    // const oppurl =process.env.REACT_APP_DOMAIN+'/insertopportunity';
+    // axios.post(oppurl,oppform,config)
+    // .then(reslt=>{
+    //   setWaiting(true)
+    //   setTimeout(()=>{
+    //    setWaiting(false)
+    //    localStorage.setItem('reloadShoppingCart','true')
+    //   window.location.replace("/account/?pid=shoppingcart")
+      
+    //   },4000)
+    // })
+    // .catch(err=>{
+    //   console.log("errr",err)
       
     
-    })
+    // })
   }
   const deleteItem =(sfid,opportunityId)=>{
     const url =process.env.REACT_APP_DOMAIN+'/wishlistitem';
