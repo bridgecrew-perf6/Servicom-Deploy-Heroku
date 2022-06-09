@@ -162,7 +162,9 @@ const Topbar = ({ themeMode, themeToggler, onSidebarOpen, pages, className, ...r
         <Link to={'/'} >
           <Image
             className={classes.logoImage}
-            src={themeMode === 'light' ? 'https://assets.maccarianagency.com/the-front/logos/logo.svg' : 'https://assets.maccarianagency.com/the-front/logos/logo-negative.svg'}
+            //'https://i.ibb.co/3cKqbvY/Dark-1.png https://i.ibb.co/KbjYwhq/Light1.png'
+            //'https://assets.maccarianagency.com/the-front/logos/logo.svg' : 'https://assets.maccarianagency.com/the-front/logos/logo-negative.svg'
+            src={themeMode === 'light' ? 'https://svgshare.com/i/i4o.svg' : 'https://svgshare.com/i/i4G.svg'}
             alt="thefront"
             lazy={false}
           />

@@ -28,9 +28,9 @@ const Hero = props => {
               title={
                 <span>
                   <Typography component="span" variant="inherit" color="primary">
-                    Learn new skills,
+                    With Servicom,
                   </Typography>{' '}
-                  gain more experiences 
+                  life becomes easier
                 </span>
               }
               subtitle="Our mission is to spread education that is easy accessible and everyone can learn."
@@ -46,8 +46,8 @@ const Hero = props => {
         }
         rightSide={
           <Image
-            src="https://assets.maccarianagency.com/the-front/photos/elearning/elearning.jpg"
-            srcSet="https://assets.maccarianagency.com/the-front/photos/elearning/elearning@2x.jpg 2x"
+            src="https://i.ibb.co/xgdc8Fc/Blue-and-White-Voter-Education-Posters.png"
+            srcSet="https://i.ibb.co/xgdc8Fc/Blue-and-White-Voter-Education-Posters.png 2x"
             alt="..."
             className={classes.image}
             lazyProps={{

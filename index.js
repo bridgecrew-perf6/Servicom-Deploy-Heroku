@@ -55,8 +55,9 @@ app.get('/productss/categories', function(req, res) {
       console.log("eee",error)
     }
     else{
+      console.log("HEEEEHi")
       res.json(data.rows)
-      //console.log(data.rows)
+      console.log(data.rows)
     }
   });
 });
@@ -75,7 +76,7 @@ app.get('/productss/partners', function(req, res) {
   });
 });
 app.get('/partners', function(req, res) {
-  client.query("select  name from salesforce.account where  Type='Technology Partner' ;", function(error, data) {
+  client.query("select name from salesforce.account where  Type='Technology Partner' ;", function(error, data) {
     if(error){
       console.log("eee",error)
     }
@@ -98,6 +99,7 @@ app.get('/productss/:category', function(req, res) {
         console.log("eee",error)
       }
       else{
+        console.log("yey")
         //console.log("if")
         res.json(data.rows)
         //console.log(data.rows)
@@ -363,6 +365,35 @@ app.get('/wishlists', function(req, res) {
     
 });
 
+app.get('/QuoteLineItems', function(req, res) {
+  //and op.OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1)
+  //const text="select p.name,p.duration__c,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p where p.sfid=op.Product2Id and op.OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1) "
+  const text="select q.quoteexternalid__c, qli.discount,qli.sfid as qliSfid, p.name,productCode ,qli.quantity,qli.unitPrice,p.duration__c,q.name as quoteName,q.sfid as quotesfid from salesforce.quotelineitem as qli  ,salesforce.product2 as p,salesforce.quote as q  where qli.quoteId=q.sfid and p.sfid=qli.product2Id and qli.quoteId in (select sfid from salesforce.quote where accountId=(select sfid from salesforce.account where accountExternalId__c=$1))"
+  const values=[req.decodedToken.cin]
+  console.log(values)
+  client.query(text,values,function(error,data){
+    if(error){
+      console.log("error",error)
+    }
+    else{
+        
+      res.json(data.rows)
+
+    }
+  })
+  
+
+});
+
+
+
+
+
+
+
+// get quote line items 
+
+
 app.get('/wishlistssingles', function(req, res) {
   //const text="select p.name,p.duration__c,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p where p.sfid=op.Product2Id and op.OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1) "
   const text="select p.name,p.duration__c,op.sfid,op.opportunityId,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p,salesforce.opportunity as o where p.sfid=op.Product2Id  and o.sfid=op.OpportunityId and o.name like $1 "
@@ -466,7 +497,8 @@ client.query(text,values,function(error,data){
 
 
   app.get('/wishlistgetquotes', function(req, res) {
-    const text="select q.discount,q.grandtotal,q.quoteexternalid__c,q.createddate, qli.discount,qli.sfid as qliSfid, p.name,productCode ,qli.quantity,qli.unitPrice,p.duration__c,q.name as quoteName,q.sfid as quotesfid from salesforce.quotelineitem as qli  ,salesforce.product2 as p,salesforce.quote as q  where qli.quoteId=q.sfid and q.status='Draft' and   p.sfid=qli.product2Id and qli.quoteId in (select sfid from salesforce.quote where accountId=(select sfid from salesforce.account where accountExternalId__c=$1))"
+    const text="select q.discount,q.grandtotal,q.quoteexternalid__c,q.createddate, qli.discount,qli.sfid as qliSfid, p.name,productCode ,qli.quantity,qli.unitPrice,p.duration__c,q.name as quoteName,q.sfid as quotesfid from salesforce.quotelineitem as qli  ,salesforce.product2 as p,salesforce.quote as q  where qli.quoteId=q.sfid and p.sfid=qli.product2Id and qli.quoteId in (select sfid from salesforce.quote where accountId=(select sfid from salesforce.account where accountExternalId__c=$1))"
+    // removed "  and q.status='Draft' "
     const values=[req.decodedToken.cin]
     client.query(text,values,function(error,data){
       //console.log('deed')
@@ -572,36 +604,42 @@ client.query(text,values,function(error,data){
  })
 
  app.post('/insertcontract', function(req, res) {
-  const text ="INSERT INTO salesforce.contract (accountId,status,StartDate,ContractTerm,contractExternalId__c,sendEmail__c) VALUES((select sfid from salesforce.account where accountEXternalId__c=$1),'Draft','2022-12-31',12,$2,'0') RETURNING *"
-  const values=[req.decodedToken.cin,req.body.contExternalId__c]
-  client.query(text,values,function(error,data){
-    if(error){
-      console.log("error",error)
-    }
-    else{
-     const text="update salesforce.opportunity set  stageName='Closed Won' where opportunityExternalId__c=(select quoteExternalId__c from salesforce.quote where sfid=$1)"
-     const values=[req.body.contExternalId__c.substring(0,req.body.contExternalId__c.indexOf(';'))]
-    client.query(text,values,function(error,data){
-      if(error){
-        console.log("error",error)
-      }
-     
-          else{
-            console.log("contract",data.rows)
-            res.json({msg:'contract added'})
-          }
-    })
-    }
-  })
+  const text="update salesforce.opportunity set  stageName='Closed Won' where opportunityExternalId__c=$1"
+  const values=[req.decodedToken.cin]
+ client.query(text,values,function(error,data){
+   if(error){
+     console.log("error",error)
+   }
+  
+       else{
+         console.log("contract",data.rows)
+         res.json({msg:'contract added'})
+       }
+ })
+
+
+  // const text ="INSERT INTO salesforce.contract (accountId,status,StartDate,ContractTerm,contractExternalId__c,sendEmail__c) VALUES((select sfid from salesforce.account where accountEXternalId__c=$1),'Draft','2022-12-31',12,$2,'0') RETURNING *"
+  // const values=[req.decodedToken.cin,req.body.contExternalId__c]
+  // client.query(text,values,function(error,data){
+  //   if(error){
+  //     console.log("error",error)
+  //   }
+  //   else{
+    //kenet lenna 
+  //   }
+  // })
   });
 
 app.get('/draftcontracts',function(req,res){
-  const text="select c.sfid as contractsfid,c.status, c.ContractTerm,c.StartDate,c.EndDate,q.sfid as quotesfid, q.grandTotal, p.name,p.duration__c from salesforce.contract as c,salesforce.quote as q  ,salesforce.quotelineitem as qli ,salesforce.product2 as p where c.status='Draft' and qli.quoteId=q.sfid and  p.sfid=qli.product2Id and q.contractId=c.sfid and c.accountId=(select sfid from salesforce.account where accountexternalId__c=$1) "
+  //select c.sfid as contractsfid,c.status, c.ContractTerm,c.StartDate,c.EndDate,q.sfid as quotesfid, q.grandTotal, p.name,p.duration__c from salesforce.contract as c,salesforce.quote as q  ,salesforce.quotelineitem as qli ,salesforce.product2 as p where c.status='Draft' and qli.quoteId=q.sfid and  p.sfid=qli.product2Id and q.contractId=c.sfid and c.accountId=(select sfid from salesforce.account where accountexternalId__c=$1)
+  const text="select sfid, status from salesforce.contract where accountId=(select sfid from salesforce.account where accountexternalId__c=$1)"
+  // select sfid, status from salesforce.contract where accountId=(select sfid from salesforce.account where accountexternalId__c='00000009')
   const values=[req.decodedToken.cin]
   client.query(text,values,function(error,data){
  
     if (error){
       console.log(error)
+      console.log("chnou ? ghadi ? ")
     }
     else{
       console.log(data.rows)
@@ -613,12 +651,13 @@ app.get('/draftcontracts',function(req,res){
 
 app.get('/activatedcontracts',function(req,res){
   
-  const text="select c.accountId ,c.sfid as contractsfid,c.status, c.ContractTerm,c.StartDate,c.EndDate,q.sfid as quotesfid, q.grandTotal, p.name,p.duration__c from salesforce.contract as c,salesforce.quote as q  ,salesforce.quotelineitem as qli ,salesforce.product2 as p where c.status='Activated' and qli.quoteId=q.sfid and  p.sfid=qli.product2Id  and q.contractId=c.sfid and c.accountId=(select sfid from salesforce.account where accountexternalId__c=$1)"
+  const text="select sfid, status from salesforce.contract where accountId=(select sfid from salesforce.account where accountexternalId__c=$1)"
   const values=[req.decodedToken.cin]
   client.query(text,values,function(error,data){
  
     if (error){
       console.log(error)
+      console.log("chnou ? hné ? ")
     }
     else{
       //console.log(data.rows)
@@ -629,7 +668,7 @@ app.get('/activatedcontracts',function(req,res){
 })
 
 app.put('/sendemailContract',function(req,res){
-  text="update  salesforce.contract set sendemail__c=$1 where sfid=$2 "
+  text="update salesforce.contract set sendemail__c=$1 where sfid=$2 "
   values=[req.body.emailValue,req.body.sfid]
   console.log("email",values)
   client.query(text,values,function(error,data){
@@ -643,7 +682,7 @@ app.put('/sendemailContract',function(req,res){
   })
   })
 app.put('/activateContract',function(req,res){
-    const text="update  salesforce.contract set status='Activated',sendEmail__c='0',StartDate=$2,contractterm=$3 where sfid=$1"
+    const text="update salesforce.contract set status='Activated',sendEmail__c='0',StartDate=$2,contractterm=$3 where sfid=$1"
     const values=[req.body.sfid,req.body.startdate,req.body.contractterm]
     console.log("email",values)
     client.query(text,values,function(error,data){

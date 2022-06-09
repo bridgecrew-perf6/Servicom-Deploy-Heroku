@@ -18,7 +18,7 @@ const Categories = props => {
       <SectionHeader
         title={
           <span>
-            Choose your course by{' '}
+            Choose your insurance by{' '}
             <Typography color="secondary" variant="inherit" component="span">categories</Typography>
           </span>
         }

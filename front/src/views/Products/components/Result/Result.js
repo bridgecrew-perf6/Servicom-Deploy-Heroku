@@ -184,6 +184,7 @@ const Result = props => {
   useEffect(() => {
     axios.get(process.env.REACT_APP_DOMAIN+'/productss'+category)
     .then(response => {
+      console.log(response.data);
       setData(response.data);
     })
     .catch((error) => {
@@ -416,7 +417,7 @@ useEffect(() => {
                   <BlogContent
                     title={item.name}
                     subtitle={item.description}
-                    author={item.username}
+             
                     date={item.createddate}
                     fullphotourl={item.mediumphotourl}
                     price={item.unitprice}

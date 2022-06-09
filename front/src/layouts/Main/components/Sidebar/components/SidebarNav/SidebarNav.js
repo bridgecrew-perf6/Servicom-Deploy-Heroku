@@ -156,7 +156,7 @@ const SidebarNav = props => {
         <a href="/" title="thefront" >
           <Image
             className={classes.logoImage}
-            src={themeMode === 'light' ? 'https://assets.maccarianagency.com/the-front/logos/logo.svg' : 'https://assets.maccarianagency.com/the-front/logos/logo-negative.svg'}
+            src={themeMode === 'light' ? 'https://i.ibb.co/KbjYwhq/Light1.png' : 'https://i.ibb.co/3cKqbvY/Dark-1.png'}
             alt="thefront"
             lazy={false}
           />

@@ -278,7 +278,9 @@ export default function Contracts() {
     
     axios.get(url,config)
     .then(reslt=>{
-      console.log(reslt.data[0].quotesfid)
+      console.log(reslt.data[0])
+      console.log("icix");
+      console.log(localStorage.getItem('jwt'))
       const allData=reslt.data
       var contractIds=[]
       var contractInter=[]
@@ -308,8 +310,6 @@ export default function Contracts() {
     })
     .catch(err=>{
       console.log("errr",err)
-      
-    
     })
     const url1 =process.env.REACT_APP_DOMAIN+'/activatedcontracts';
     
@@ -400,7 +400,6 @@ export default function Contracts() {
   .then(reslt=>{
     console.log("resslt",reslt.data)
     window.location.reload()    
-    
   })
   .catch(err=>
     console.log("signup err",err))

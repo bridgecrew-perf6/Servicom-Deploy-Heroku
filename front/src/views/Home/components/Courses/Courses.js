@@ -62,7 +62,7 @@ const Courses = props => {
       <SectionHeader
         title={
           <span>
-            Browse our <Typography color="secondary" variant="inherit" component="span">popular courses</Typography>
+            Browse our <Typography color="secondary" variant="inherit" component="span">popular services</Typography>
           </span>
         }
         subtitle="Here are our popular course you might want to learn from your tutor."

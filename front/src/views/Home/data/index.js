@@ -35,49 +35,49 @@ export const courseCategories = [
   {
     color: colors.blue,
     icon: 'fas fa-pen-nib',
-    title: 'Web Design',
+    title: 'Assurance Vie',
     subtitle: 'Choose thousands of web design online course.',
   },
   {
     color: colors.purple,
     icon: 'fas fa-book-open',
-    title: 'Business Analytics',
+    title: 'Assurance Biens',
     subtitle: 'Choose thousands of business analytics online course.',
   },
   {
     color: colors.amber,
     icon: 'fas fa-camera-retro',
-    title: 'Photography',
+    title: 'Assurance Multirisque Professionnelle',
     subtitle: 'Choose thousands of photography online course.',
   },
   {
     color: colors.indigo,
     icon: 'fas fa-video',
-    title: 'Video Creating',
+    title: 'Résponsabilité Civile',
     subtitle: 'Choose thousands of video creating online course.',
   },
   {
     color: colors.pink,
     icon: 'fas fa-heartbeat',
-    title: 'Health & Fitness',
+    title: 'Assurance Transport',
     subtitle: 'Choose thousands of health & fitness online course.',
   },
   {
     color: colors.green,
     icon: 'fas fa-bullhorn',
-    title: 'Marketing',
+    title: 'Capitalisation Vie Collective',
     subtitle: 'Choose thousands of marketing online course.',
   },
   {
     color: colors.deepOrange,
     icon: 'fas fa-funnel-dollar',
-    title: 'Finances & Sales',
+    title: 'Assurance Santé',
     subtitle: 'Choose thousands of finaces & sales online course.',
   },
   {
     color: colors.red,
     icon: 'fas fa-paint-brush',
-    title: 'Graphic Design',
+    title: 'Autres',
     subtitle: 'Choose thousands of graphic design online course.',
   },
 ];
@@ -97,14 +97,14 @@ export const popularCourses = [
           src: 'https://assets.maccarianagency.com/the-front/photos/people/veronica-adams.jpg',
           srcSet: 'https://assets.maccarianagency.com/the-front/photos/people/veronica-adams@2x.jpg 2x',
         },
-        authorName: 'Veronica Adams',
+        authorName: 'Hammami Ahmed',
       },
       {
         authorPhoto: {
           src: 'https://assets.maccarianagency.com/the-front/photos/people/akachi-luccini.jpg',
           srcSet: 'https://assets.maccarianagency.com/the-front/photos/people/akachi-luccini@2x.jpg 2x',
         },
-        authorName: 'Akachi Luccini',
+        authorName: 'Ahmed Hammami',
       },
       {
         authorPhoto: {
@@ -311,86 +311,59 @@ export const reviews = [
       src: 'https://assets.maccarianagency.com/the-front/photos/people/veronica-adams.jpg',
       srcSet: 'https://assets.maccarianagency.com/the-front/photos/people/veronica-adams@2x.jpg 2x',
     },
-    authorName: 'Veronica Adams',
+    authorName: 'Ahmed Hammami',
     authorOccupation: 'Growth Marketer, Crealytics',
     feedback:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+      'Im very pleased with how fast and easy it was to buy the service and then setup our community site, i couldnt believe it at first but it all happened in 15 minutes and i have all my employees logged in and checking what new services we enrolled in.',
   },
   {
     authorPhoto: {
       src: 'https://assets.maccarianagency.com/the-front/photos/people/akachi-luccini.jpg',
       srcSet: 'https://assets.maccarianagency.com/the-front/photos/people/akachi-luccini@2x.jpg 2x',
     },
-    authorName: 'Akachi Luccini',
+    authorName: 'Hammami Ahmed',
     authorOccupation: 'Lead Generation, Alternative Capital',
     feedback:
-      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
+      'to be honest at first i was like "Yeah but why would i need such a website ? " But now after using it with my colleagues I understand how having all our services in a single place with clear manipulations could benefit us.',
   },
   {
     authorPhoto: {
       src: 'https://assets.maccarianagency.com/the-front/photos/people/jack-smith.jpg',
       srcSet: 'https://assets.maccarianagency.com/the-front/photos/people/jack-smith@2x.jpg 2x',
     },
-    authorName: 'Jack Smith',
+    authorName: 'AHMED HAMMAMI',
     authorOccupation: 'Head of Operations, Parkfield Commerce',
     feedback:
-      'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+      'WOW! I never actually thought about even needing this kind of service, but now that my company enrolled us with Servitium, its been easier to keep up.',
   },
 ];
 export const featuredProducts = [
   {
     image: {
-      src: 'https://assets.maccarianagency.com/the-front/photos/ecommerce/product1.png',
-      srcSet: 'https://assets.maccarianagency.com/the-front/photos/ecommerce/product1@2x.png 2x',
+      src: 'https://immoreseau.ma/wp-content/uploads/2019/04/ASSURANCE-750x422.png',
+      srcSet: 'https://immoreseau.ma/wp-content/uploads/2019/04/ASSURANCE-750x422.png 2x',
     },
     price: '$320',
-    title: 'Music player',
+    title: 'Assurance multirisque niveau 3 ',
     rating: 5,
   },
   {
     image: {
-      src: 'https://assets.maccarianagency.com/the-front/photos/ecommerce/product2.png',
-      srcSet: 'https://assets.maccarianagency.com/the-front/photos/ecommerce/product2@2x.png 2x',
+      src: 'https://www.leguidedelassurancepro.fr/images/dossiers/2020-06/agent-assurance-093305.jpg',
+      srcSet: 'https://www.leguidedelassurancepro.fr/images/dossiers/2020-06/agent-assurance-093305.jpg 2x',
     },
     price: '$120',
-    title: 'Headphones',
+    title: 'Assurance multirisque niveau 1 ',
     rating: 4,
   },
   {
     image: {
-      src: 'https://assets.maccarianagency.com/the-front/photos/ecommerce/product3.png',
-      srcSet: 'https://assets.maccarianagency.com/the-front/photos/ecommerce/product3@2x.png 2x',
+      src: 'https://www.tradupreneurs.fr/wp-content/uploads/2021/04/tradupreneurs_Lassurance-professionnelle-_-pouvez-vous-vous-en-passer_image-mise-en-avant-1080x675.png',
+      srcSet: 'https://www.tradupreneurs.fr/wp-content/uploads/2021/04/tradupreneurs_Lassurance-professionnelle-_-pouvez-vous-vous-en-passer_image-mise-en-avant-1080x675.png 2x',
     },
-    price: '$290',
-    title: 'Wireless headpohones',
+    price: '$250',
+    title: 'Assurance multirisque niveau 2 ',
     rating: 5,
-  },
-  {
-    image: {
-      src: 'https://assets.maccarianagency.com/the-front/photos/ecommerce/product4.png',
-      srcSet: 'https://assets.maccarianagency.com/the-front/photos/ecommerce/product4@2x.png 2x',
-    },
-    price: '$140',
-    title: 'Bluetooth headphones',
-    rating: 3,
-  },
-  {
-    image: {
-      src: 'https://assets.maccarianagency.com/the-front/photos/ecommerce/product5.png',
-      srcSet: 'https://assets.maccarianagency.com/the-front/photos/ecommerce/product5@2x.png 2x',
-    },
-    price: '$170',
-    title: 'Headphones',
-    rating: 5,
-  },
-  {
-    image: {
-      src: 'https://assets.maccarianagency.com/the-front/photos/ecommerce/product6.png',
-      srcSet: 'https://assets.maccarianagency.com/the-front/photos/ecommerce/product6@2x.png 2x',
-    },
-    price: '$300',
-    title: 'Music player',
-    rating: 4,
   },
 ];
 

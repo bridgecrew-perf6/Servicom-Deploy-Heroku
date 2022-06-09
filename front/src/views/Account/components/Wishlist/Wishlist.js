@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { Divider, useMediaQuery } from '@material-ui/core';
 import { Grid, Button, Avatar, Typography } from '@material-ui/core';
+import './Wishlist.css'
 import { SectionHeader } from 'components/molecules';
 import axios from 'axios';
 
@@ -129,6 +130,22 @@ const Wishlist = props => {
     
     // })
   }
+
+
+
+  const cartButtons = document.querySelectorAll('.cart-button');
+
+  cartButtons.forEach(button => {
+    button.addEventListener('click', cartClick);
+  });
+  
+  function cartClick() {
+    let button = this;
+    button.classList.add('clicked');
+  }
+
+
+
   const deleteItem =(sfid,opportunityId)=>{
     const url =process.env.REACT_APP_DOMAIN+'/wishlistitem';
     axios.delete(url,{
@@ -216,19 +233,28 @@ const Wishlist = props => {
           </Grid>
          
         ))}
+
+
+
+
         </Grid>
         
         
            <Grid item container justifyContent='center' style={{marginTop:30}}  xs={12}>
-           <Button
+           {/* <Button
                     variant="outlined"
                     color="secondary"
                     size={isMd ? 'large' : 'medium'}
                     onClick={bookNow}
                     >
                     Book  now!
-                  </Button>
-        
+                  </Button> */}
+        <button class="cart-button" onClick={bookNow}>
+	<span class="add-to-cart">Add to cart</span>
+	<span class="added">Added</span>
+	<i class="fas fa-shopping-cart"></i>
+	<i class="fas fa-box"></i>
+</button>
            <Button
                   variant="outlined"
                   color="primary"

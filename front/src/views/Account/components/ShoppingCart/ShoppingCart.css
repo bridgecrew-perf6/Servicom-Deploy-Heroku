@@ -30,9 +30,13 @@ div.a {
   th {
     height: 70px;
   }
+
   .td1{
     text-align:left;
     padding-left: 1rem;
+  }
+  .listselect{
+    max-width: 250px;
   }
   td {
       text-align: center;
