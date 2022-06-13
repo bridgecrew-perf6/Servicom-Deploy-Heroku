@@ -24,6 +24,7 @@ const PORT = process.env.PORT ||5000;
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
   console.log('Press Ctrl+C to quit.');
+  console.log(path.resolve(__dirname, "./front/build"));
 });
 
 if (env==='production'){
@@ -328,10 +329,11 @@ app.delete('/deleteaccount',function(req,res){
 
 
 app.post('/wishlists', function(req, res) {
-              const text = 'INSERT INTO salesforce.OpportunityLineItem (Description,Product2Id,UnitPrice,name,quantity,OpportunityId) VALUES($1,$2,$3,$4,$5,(select sfid from salesforce.opportunity where opportunityExternalId__c=$6)) RETURNING *'
+              const text = "INSERT INTO salesforce.OpportunityLineItem (Description,Product2Id,UnitPrice,name,quantity,OpportunityId) VALUES($1,$2,$3,$4,$5,(select sfid from salesforce.opportunity where opportunityExternalId__c=$6 and StageName='Prospecting')) RETURNING *"
               const values=[req.body.Description,req.body.Product2Id,req.body.UnitPrice,req.body.name+" "+req.decodedToken.name,req.body.Quantity,req.decodedToken.cin]
               console.log("CIN HEY");
               console.log(req.decodedToken.cin);
+              console.log(values)
               client.query(text,values,function(error,data){
                 if(error){
                   console.log("error",error)
@@ -368,7 +370,7 @@ app.get('/wishlists', function(req, res) {
 app.get('/QuoteLineItems', function(req, res) {
   //and op.OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1)
   //const text="select p.name,p.duration__c,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p where p.sfid=op.Product2Id and op.OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1) "
-  const text="select q.quoteexternalid__c, qli.discount,qli.sfid as qliSfid, p.name,productCode ,qli.quantity,qli.unitPrice,p.duration__c,q.name as quoteName,q.sfid as quotesfid from salesforce.quotelineitem as qli  ,salesforce.product2 as p,salesforce.quote as q  where qli.quoteId=q.sfid and p.sfid=qli.product2Id and qli.quoteId in (select sfid from salesforce.quote where accountId=(select sfid from salesforce.account where accountExternalId__c=$1))"
+  const text="select q.quoteexternalid__c, qli.discount,qli.sfid as qliSfid, p.name,productCode ,qli.quantity,qli.unitPrice,p.duration__c,q.name as quoteName,q.sfid as quotesfid from salesforce.quotelineitem as qli  ,salesforce.product2 as p,salesforce.quote as q  where qli.quoteId=q.sfid and q.status = 'Presented' and p.sfid=qli.product2Id and qli.quoteId in (select sfid from salesforce.quote where accountId=(select sfid from salesforce.account where accountExternalId__c=$1))"
   const values=[req.decodedToken.cin]
   console.log(values)
   client.query(text,values,function(error,data){
@@ -396,8 +398,8 @@ app.get('/QuoteLineItems', function(req, res) {
 
 app.get('/wishlistssingles', function(req, res) {
   //const text="select p.name,p.duration__c,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p where p.sfid=op.Product2Id and op.OpportunityId=(select sfid from salesforce.opportunity where opportunityExternalId__c=$1) "
-  const text="select p.name,p.duration__c,op.sfid,op.opportunityId,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p,salesforce.opportunity as o where p.sfid=op.Product2Id  and o.sfid=op.OpportunityId and o.name like $1 "
-  const values=[req.decodedToken.name]
+  const text="select p.name,p.duration__c,op.sfid,op.opportunityId,op.description,op.quantity,op.UnitPrice from salesforce.OpportunityLineItem as op ,salesforce.product2 as p,salesforce.opportunity as o where p.sfid=op.Product2Id  and o.sfid=op.OpportunityId and o.StageName='Prospecting' and o.opportunityExternalId__c =$1"
+  const values=[req.decodedToken.cin]
   client.query(text,values,function(error,data){
     if(error){
       console.log("error",error)
@@ -478,8 +480,8 @@ client.query(text,values,function(error,data){
 
 
     app.put('/insertopportunity',function(req,res){
-      text="update salesforce.opportunity set  stageName='Proposal/Price Quote'  where name like $1 "
-      values=["%"+req.decodedToken.name+"%"]
+      text="update salesforce.opportunity set  stageName='Proposal/Price Quote'  where opportunityExternalId__c=$1 "
+      values=[req.decodedToken.cin]
       console.log("email",values)
       client.query(text,values,function(error,data){
         if (error){
@@ -632,7 +634,7 @@ client.query(text,values,function(error,data){
 
 app.get('/draftcontracts',function(req,res){
   //select c.sfid as contractsfid,c.status, c.ContractTerm,c.StartDate,c.EndDate,q.sfid as quotesfid, q.grandTotal, p.name,p.duration__c from salesforce.contract as c,salesforce.quote as q  ,salesforce.quotelineitem as qli ,salesforce.product2 as p where c.status='Draft' and qli.quoteId=q.sfid and  p.sfid=qli.product2Id and q.contractId=c.sfid and c.accountId=(select sfid from salesforce.account where accountexternalId__c=$1)
-  const text="select sfid, status from salesforce.contract where accountId=(select sfid from salesforce.account where accountexternalId__c=$1)"
+  const text="select sfid, status from salesforce.contract where status='Draft' and accountId=(select sfid from salesforce.account where accountexternalId__c=$1)"
   // select sfid, status from salesforce.contract where accountId=(select sfid from salesforce.account where accountexternalId__c='00000009')
   const values=[req.decodedToken.cin]
   client.query(text,values,function(error,data){
@@ -642,6 +644,7 @@ app.get('/draftcontracts',function(req,res){
       console.log("chnou ? ghadi ? ")
     }
     else{
+      console.log(values)
       console.log(data.rows)
       res.json(data.rows)
     }
@@ -651,7 +654,7 @@ app.get('/draftcontracts',function(req,res){
 
 app.get('/activatedcontracts',function(req,res){
   
-  const text="select sfid, status from salesforce.contract where accountId=(select sfid from salesforce.account where accountexternalId__c=$1)"
+  const text="select sfid, status from salesforce.contract where status='Activated' and accountId=(select sfid from salesforce.account where accountexternalId__c=$1)"
   const values=[req.decodedToken.cin]
   client.query(text,values,function(error,data){
  
@@ -682,8 +685,8 @@ app.put('/sendemailContract',function(req,res){
   })
   })
 app.put('/activateContract',function(req,res){
-    const text="update salesforce.contract set status='Activated',sendEmail__c='0',StartDate=$2,contractterm=$3 where sfid=$1"
-    const values=[req.body.sfid,req.body.startdate,req.body.contractterm]
+    const text="update salesforce.contract set status='Activated',StartDate=$2,contractterm=$3 where accountId=(select sfid from salesforce.account where accountexternalId__c=$1)"
+    const values=[req.decodedToken.cin,req.body.startdate,req.body.contractterm]
     console.log("email",values)
     client.query(text,values,function(error,data){
       if (error){

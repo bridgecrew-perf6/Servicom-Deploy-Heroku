@@ -120,7 +120,7 @@ const Product = () => {
         cover={info.picture_url__c}
         title={info.name}
         subtitle={info.subtitle__c}
-        author={info.username}
+        
         authorPhoto={info.mediumphotourl}
         dateAdded={info.createddate}
       />

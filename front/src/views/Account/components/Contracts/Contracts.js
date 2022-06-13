@@ -83,7 +83,7 @@ const maxContractTerm=(info)=>{
             title={"Contract n° : "+(index+1)}
             primaryCta={
                 info.status==='Draft'? 
-              <Button variant="outlined" onClick={()=>activateNow(info.contractsfid,formatDate(),maxContractTerm(info.products))} color="primary" size={isSm ?"large":"small"}>
+              <Button variant="outlined" onClick={()=>activateNow(info.sfid,formatDate(),maxContractTerm(info.products))} color="primary" size={isSm ?"large":"small"}>
                 Activate Now !
               </Button>
               :<></>
@@ -253,6 +253,7 @@ export default function Contracts() {
       const url =process.env.REACT_APP_DOMAIN+'/insertcontract';
       axios.post(url,form,config)
       .then(reslt=>{
+        console.log("closed won")
         console.log(reslt.data)
         localStorage.removeItem("quoteSfid")
         setTimeout(()=>{
@@ -315,7 +316,8 @@ export default function Contracts() {
     
     axios.get(url1,config)
     .then(reslt=>{
-      console.log(reslt.data[0].quotesfid)
+      console.log(reslt.data[0])
+      console.log("iciy")
       const allData=reslt.data
       var contractIds=[]
       var contractInter=[]
